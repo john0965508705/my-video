@@ -1,31 +1,22 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
-
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no">
 
-    <title>我的展覽作品</title>
+    <title></title>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background: #000;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: black;
             overflow: hidden;
         }
 
@@ -34,25 +25,44 @@
             height: 100vh;
             object-fit: contain;
             display: block;
+            background: black;
         }
     </style>
 </head>
 
 <body>
 
-    <video
-        controls
-        autoplay
-        muted
-        playsinline
-        preload="auto">
+<video
+    id="video"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto">
 
-        <source src="video.mp4" type="video/mp4">
+    <source src="video.mp4" type="video/mp4">
 
-        您的瀏覽器不支援影片播放。
+</video>
 
-    </video>
+<script>
+const video = document.getElementById("video");
+
+video.play().catch(() => {});
+
+video.addEventListener("click", async () => {
+    try {
+        if (video.requestFullscreen) {
+            await video.requestFullscreen();
+        } else if (video.webkitEnterFullscreen) {
+            video.webkitEnterFullscreen();
+        }
+
+        video.play();
+    } catch (e) {
+        console.log(e);
+    }
+});
+</script>
 
 </body>
-
 </html>
