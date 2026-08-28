@@ -52,11 +52,15 @@
 
 
     body {
-
       min-height: 100dvh;
-
     }
 
+
+    /*
+     * ==========================================
+     * 主畫面
+     * ==========================================
+     */
 
     .screen {
 
@@ -65,10 +69,7 @@
 
       display: flex;
 
-      flex-direction: column;
-
       align-items: center;
-
       justify-content: center;
 
       padding:
@@ -84,9 +85,22 @@
 
     /*
      * ==========================================
-     * 標題
+     * 選擇頁面
      * ==========================================
      */
+
+    #selection {
+
+      width: 100%;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+    }
+
 
     .title {
 
@@ -101,12 +115,6 @@
 
     }
 
-
-    /*
-     * ==========================================
-     * 三個選項
-     * ==========================================
-     */
 
     .options {
 
@@ -150,15 +158,13 @@
 
       letter-spacing: 0.08em;
 
-      text-decoration: none;
-
       cursor: pointer;
 
       -webkit-tap-highlight-color: transparent;
 
       transition:
-        background 0.2s ease,
-        color 0.2s ease,
+        background 0.15s ease,
+        color 0.15s ease,
         transform 0.1s ease;
 
     }
@@ -177,40 +183,27 @@
 
     /*
      * ==========================================
-     * 倒數畫面
+     * 黑屏倒數
      * ==========================================
      */
 
-    .countdown {
+    #countdown {
 
       display: none;
 
-      flex-direction: column;
+      width: 100%;
+      height: 100%;
 
       align-items: center;
-
       justify-content: center;
 
     }
 
 
-    .countdown-text {
-
-      font-size: 15px;
-
-      letter-spacing: 0.12em;
-
-      opacity: 0.65;
-
-      margin-bottom: 20px;
-
-    }
-
-
-    .number {
+    #number {
 
       font-size:
-        clamp(90px, 28vw, 150px);
+        clamp(120px, 35vw, 220px);
 
       font-weight: 200;
 
@@ -218,159 +211,8 @@
 
       letter-spacing: 0;
 
-    }
-
-
-    .seconds {
-
-      margin-top: 20px;
-
-      font-size: 14px;
-
-      letter-spacing: 0.1em;
-
-      opacity: 0.5;
-
-    }
-
-
-    /*
-     * ==========================================
-     * 結束畫面
-     * ==========================================
-     */
-
-    .finished {
-
-      display: none;
-
-      flex-direction: column;
-
-      align-items: center;
-
-      justify-content: center;
-
-    }
-
-
-    .finished-title {
-
-      font-size:
-        clamp(25px, 7vw, 36px);
-
-      letter-spacing: 0.12em;
-
-      margin-bottom: 20px;
-
-    }
-
-
-    .finished-text {
-
-      font-size: 14px;
-
-      letter-spacing: 0.08em;
-
-      opacity: 0.55;
-
-    }
-
-
-    /*
-     * ==========================================
-     * Loading
-     * ==========================================
-     */
-
-    .loading {
-
-      display: none;
-
-      flex-direction: column;
-
-      align-items: center;
-
-      justify-content: center;
-
-    }
-
-
-    .loading-text {
-
-      font-size: 15px;
-
-      letter-spacing: 0.1em;
-
-      opacity: 0.7;
-
-    }
-
-
-    .spinner {
-
-      width: 18px;
-
-      height: 18px;
-
-      margin-top: 18px;
-
-      border:
-        1.5px solid rgba(255,255,255,0.25);
-
-      border-top-color: #fff;
-
-      border-radius: 50%;
-
-      animation:
-        spin 0.8s linear infinite;
-
-    }
-
-
-    @keyframes spin {
-
-      to {
-
-        transform: rotate(360deg);
-
-      }
-
-    }
-
-
-    /*
-     * ==========================================
-     * Fallback
-     * ==========================================
-     */
-
-    .fallback {
-
-      display: none;
-
-      margin-top: 30px;
-
-    }
-
-
-    .fallback a {
-
-      display: inline-block;
-
-      padding: 13px 22px;
-
-      color: #fff;
-
-      border:
-        1px solid rgba(255,255,255,0.6);
-
-      border-radius: 999px;
-
-      text-decoration: none;
-
-      font-size: 14px;
-
-      letter-spacing: 0.06em;
+      font-variant-numeric:
+        tabular-nums;
 
     }
 
@@ -386,29 +228,23 @@
 
 
     <!-- ========================================
-         選擇頁面
+         選擇你的窗口
          ======================================== -->
 
-    <section
-      id="selection"
-    >
+    <section id="selection">
 
 
-      <div
-        class="title"
-      >
+      <div class="title">
         選擇你的窗口
       </div>
 
 
-      <div
-        class="options"
-      >
+      <div class="options">
 
 
         <button
           class="option"
-          onclick="startExperience('instagram')"
+          onclick="startCountdown('instagram')"
         >
           IG Reels
         </button>
@@ -416,7 +252,7 @@
 
         <button
           class="option"
-          onclick="startExperience('facebook')"
+          onclick="startCountdown('facebook')"
         >
           Facebook Reels
         </button>
@@ -424,7 +260,7 @@
 
         <button
           class="option"
-          onclick="startExperience('threads')"
+          onclick="startCountdown('threads')"
         >
           Threads
         </button>
@@ -437,83 +273,16 @@
 
 
     <!-- ========================================
-         開啟 App
+         黑色倒數畫面
          ======================================== -->
 
-    <section
-      class="loading"
-      id="loading"
-    >
+    <section id="countdown">
 
-      <div
-        class="loading-text"
-      >
-        正在進入你的影像流
+
+      <div id="number">
+        10
       </div>
 
-
-      <div
-        class="spinner"
-      ></div>
-
-
-    </section>
-
-
-    <!-- ========================================
-         倒數
-         ======================================== -->
-
-    <section
-      class="countdown"
-      id="countdown"
-    >
-
-      <div
-        class="countdown-text"
-      >
-        觀看時間
-      </div>
-
-
-      <div
-        class="number"
-        id="number"
-      >
-        30
-      </div>
-
-
-      <div
-        class="seconds"
-      >
-        秒
-      </div>
-
-    </section>
-
-
-    <!-- ========================================
-         結束
-         ======================================== -->
-
-    <section
-      class="finished"
-      id="finished"
-    >
-
-      <div
-        class="finished-title"
-      >
-        觀看時間結束
-      </div>
-
-
-      <div
-        class="finished-text"
-      >
-        請將手機放回原處
-      </div>
 
     </section>
 
@@ -526,24 +295,25 @@
 
     /*
      * ==================================================
-     * 設定
+     * 設定倒數秒數
      * ==================================================
      */
 
-    const COUNTDOWN_SECONDS = 30;
+    const COUNTDOWN_SECONDS = 10;
 
 
     /*
      * ==================================================
-     * App Deep Links
+     * App Deep Link
      *
-     * 注意：
+     * 只負責開啟 App。
      *
-     * 這裡只要求「開啟 App」，
-     * 不要求 App 直接進入 Reels。
+     * 不使用：
      *
-     * 這是目前經過你 iPhone / Samsung
-     * 實測成功的方式。
+     * instagram://reels/
+     * fb://reels/
+     *
+     * 避免之前 iPhone Instagram 發生錯誤。
      * ==================================================
      */
 
@@ -583,122 +353,133 @@
 
     /*
      * ==================================================
-     * 狀態
+     * 防止重複點擊
      * ==================================================
      */
 
-    let countdownTimer = null;
-
-    let endTime = null;
+    let isRunning = false;
 
 
     /*
      * ==================================================
-     * 隱藏所有畫面
+     * 開始倒數
      * ==================================================
      */
 
-    function hideAll() {
-
-      document
-        .getElementById("selection")
-        .style.display = "none";
-
-
-      document
-        .getElementById("loading")
-        .style.display = "none";
-
-
-      document
-        .getElementById("countdown")
-        .style.display = "none";
-
-
-      document
-        .getElementById("finished")
-        .style.display = "none";
-
-    }
-
-
-    /*
-     * ==================================================
-     * 顯示 Loading
-     * ==================================================
-     */
-
-    function showLoading() {
-
-      hideAll();
-
-
-      document
-        .getElementById("loading")
-        .style.display = "flex";
-
-    }
-
-
-    /*
-     * ==================================================
-     * 顯示倒數
-     * ==================================================
-     */
-
-    function showCountdown() {
-
-      hideAll();
-
-
-      document
-        .getElementById("countdown")
-        .style.display = "flex";
-
-    }
-
-
-    /*
-     * ==================================================
-     * 顯示結束
-     * ==================================================
-     */
-
-    function showFinished() {
-
-      hideAll();
-
-
-      document
-        .getElementById("finished")
-        .style.display = "flex";
-
-    }
-
-
-    /*
-     * ==================================================
-     * 開始整個體驗
-     * ==================================================
-     */
-
-    function startExperience(appName) {
+    function startCountdown(appName) {
 
 
       /*
-       * 防止重複點擊
+       * 如果已經開始，
+       * 不允許再次點擊。
        */
 
-      if (countdownTimer !== null) {
+      if (isRunning) {
 
         return;
 
       }
 
 
+      isRunning = true;
+
+
       /*
-       * 取得 App URL
+       * 隱藏選擇頁面
        */
+
+      document
+        .getElementById("selection")
+        .style.display = "none";
+
+
+      /*
+       * 顯示黑色倒數畫面
+       */
+
+      document
+        .getElementById("countdown")
+        .style.display = "flex";
+
+
+      /*
+       * 設定初始數字
+       */
+
+      let seconds =
+        COUNTDOWN_SECONDS;
+
+
+      document
+        .getElementById("number")
+        .textContent =
+        seconds;
+
+
+      /*
+       * ==============================================
+       * 每秒倒數一次
+       * ==============================================
+       */
+
+      const timer =
+        setInterval(function () {
+
+
+          seconds--;
+
+
+          /*
+           * 顯示新的數字
+           */
+
+          document
+            .getElementById("number")
+            .textContent =
+            seconds;
+
+
+          /*
+           * ==========================================
+           * 倒數到 0
+           * ==========================================
+           */
+
+          if (seconds <= 0) {
+
+
+            clearInterval(timer);
+
+
+            /*
+             * 稍微停留一下 0
+             *
+             * 讓觀眾確實看到「0」。
+             */
+
+            setTimeout(function () {
+
+              openSelectedApp(appName);
+
+            }, 150);
+
+
+          }
+
+
+        }, 1000);
+
+    }
+
+
+    /*
+     * ==================================================
+     * 開啟選擇的 App
+     * ==================================================
+     */
+
+    function openSelectedApp(appName) {
+
 
       const appURL =
         appLinks[appName];
@@ -709,25 +490,9 @@
 
 
       /*
-       * 顯示「正在進入」
-       */
-
-      showLoading();
-
-
-      /*
-       * ================================================
-       * 30 秒計時在這裡正式開始
-       * ================================================
-       */
-
-      endTime =
-        Date.now() +
-        COUNTDOWN_SECONDS * 1000;
-
-
-      /*
-       * 先嘗試開啟 App
+       * ==============================================
+       * 嘗試開啟 App
+       * ==============================================
        */
 
       try {
@@ -738,8 +503,8 @@
       } catch (error) {
 
         /*
-         * 如果 Deep Link 發生錯誤，
-         * 直接使用網頁版。
+         * 如果 Deep Link 無法使用，
+         * 開啟網頁版。
          */
 
         window.location.href =
@@ -749,213 +514,20 @@
 
 
       /*
-       * 約 1.2 秒後進入倒數畫面
+       * ==============================================
+       * Fallback
        *
-       * 注意：
-       *
-       * 如果 App 成功開啟，
-       * 使用者會離開這個網頁。
-       *
-       * 如果 App 沒有開啟，
-       * 則會在這裡看到倒數。
+       * 如果手機沒有安裝 App，
+       * Deep Link 不會成功，
+       * 約 1.5 秒後開啟網頁版。
+       * ==============================================
        */
 
       setTimeout(function () {
 
-        showCountdown();
-
-        updateCountdown();
-
-        countdownTimer =
-          setInterval(
-            updateCountdown,
-            250
-          );
-
-      }, 1200);
-
-    }
-
-
-    /*
-     * ==================================================
-     * 更新倒數
-     * ==================================================
-     */
-
-    function updateCountdown() {
-
-
-      if (!endTime) {
-
-        return;
-
-      }
-
-
-      const remaining =
-        Math.max(
-          0,
-          endTime - Date.now()
-        );
-
-
-      const seconds =
-        Math.ceil(
-          remaining / 1000
-        );
-
-
-      document
-        .getElementById("number")
-        .textContent =
-        seconds;
-
-
-      /*
-       * 倒數結束
-       */
-
-      if (remaining <= 0) {
-
-        clearInterval(
-          countdownTimer
-        );
-
-
-        countdownTimer =
-          null;
-
-
-        showFinished();
-
-
-        notifyUser();
-
-      }
-
-    }
-
-
-    /*
-     * ==================================================
-     * 提醒觀眾
-     * ==================================================
-     *
-     * 這裡使用：
-     *
-     * 1. 震動
-     * 2. 音效
-     *
-     * 但手機是否允許，
-     * 由 iPhone / Android 瀏覽器決定。
-     * ==================================================
-     */
-
-    function notifyUser() {
-
-
-      /*
-       * 震動
-       */
-
-      if (
-        "vibrate" in navigator
-      ) {
-
-        try {
-
-          navigator.vibrate(
-            [300, 150, 300]
-          );
-
-        } catch (error) {
-
-          // 某些裝置不允許震動
-        }
-
-      }
-
-
-      /*
-       * 嘗試播放提示音
-       */
-
-      try {
-
-        const AudioContext =
-          window.AudioContext ||
-          window.webkitAudioContext;
-
-
-        if (AudioContext) {
-
-          const audio =
-            new AudioContext();
-
-
-          const oscillator =
-            audio.createOscillator();
-
-
-          const gain =
-            audio.createGain();
-
-
-          oscillator.frequency.value =
-            880;
-
-
-          oscillator.connect(gain);
-
-
-          gain.connect(
-            audio.destination
-          );
-
-
-          gain.gain.setValueAtTime(
-            0.15,
-            audio.currentTime
-          );
-
-
-          oscillator.start();
-
-
-          oscillator.stop(
-            audio.currentTime + 0.25
-          );
-
-        }
-
-      } catch (error) {
-
-        // 某些手機會禁止網頁自動播放聲音
-
-      }
-
-    }
-
-
-    /*
-     * ==================================================
-     * 當使用者返回網頁
-     * ==================================================
-     *
-     * 如果觀眾從 Instagram /
-     * Facebook / Threads 回到網頁，
-     * 這裡會重新檢查倒數。
-     * ==================================================
-     */
-
-    document.addEventListener(
-      "visibilitychange",
-      function () {
-
-
         /*
-         * 頁面重新出現
+         * 只有當目前頁面仍然可見時，
+         * 才代表 App 很可能沒有成功開啟。
          */
 
         if (
@@ -963,50 +535,14 @@
           "visible"
         ) {
 
-
-          if (
-            endTime &&
-            countdownTimer === null
-          ) {
-
-            /*
-             * 如果 30 秒已經過去
-             */
-
-            if (
-              Date.now() >= endTime
-            ) {
-
-              showFinished();
-
-              notifyUser();
-
-            }
-
-            /*
-             * 還沒結束
-             */
-
-            else {
-
-              showCountdown();
-
-              updateCountdown();
-
-              countdownTimer =
-                setInterval(
-                  updateCountdown,
-                  250
-                );
-
-            }
-
-          }
+          window.location.href =
+            webURL;
 
         }
 
-      }
-    );
+      }, 1500);
+
+    }
 
 
   </script>
