@@ -161,12 +161,6 @@
     }
 
 
-    /*
-     * ===============================
-     * Loading
-     * ===============================
-     */
-
     .loading {
 
       display: none;
@@ -211,12 +205,6 @@
 
     }
 
-
-    /*
-     * ===============================
-     * Fallback
-     * ===============================
-     */
 
     .fallback {
 
@@ -402,9 +390,10 @@
 
     /*
      * ==========================================
-     * 原本已經測試過的 Deep Link
+     * App Deep Link
      *
-     * ★ 不修改 ★
+     * 保留你目前已測試過的方式
+     * 不改成 intent://
      * ==========================================
      */
 
@@ -420,15 +409,6 @@
         "barcelona://"
 
     };
-
-
-    /*
-     * ==========================================
-     * 防止連續點擊
-     * ==========================================
-     */
-
-    let opening = false;
 
 
     /*
@@ -464,62 +444,37 @@
 
     function showFallback(url) {
 
-      /*
-       * 如果 App 已經成功接管頁面，
-       * 不再顯示 fallback。
-       */
-
-      if (
-        document.visibilityState !==
-        "visible"
-      ) {
-
-        return;
-
-      }
-
-
       document
         .getElementById("loading")
         .style.display = "none";
 
 
       const fallback =
-        document.getElementById(
-          "fallback"
-        );
+        document.getElementById("fallback");
 
 
       const link =
-        document.getElementById(
-          "fallbackLink"
-        );
+        document.getElementById("fallbackLink");
 
 
       const note =
-        document.getElementById(
-          "note"
-        );
+        document.getElementById("note");
 
 
       link.href = url;
 
 
-      fallback.classList.add(
-        "show"
-      );
+      fallback.classList.add("show");
 
 
-      note.classList.add(
-        "show"
-      );
+      note.classList.add("show");
 
     }
 
 
     /*
      * ==========================================
-     * App 開啟
+     * 開啟 App
      * ==========================================
      */
 
@@ -527,31 +482,11 @@
 
 
       /*
-       * 防止重複點擊
-       */
-
-      if (opening) {
-
-        event.preventDefault();
-
-        return;
-
-      }
-
-
-      opening = true;
-
-
-      /*
-       * 阻止 HTTPS
+       * 阻止 HTTPS 網頁連結
        */
 
       event.preventDefault();
 
-
-      /*
-       * 顯示 Loading
-       */
 
       showLoading();
 
@@ -565,47 +500,18 @@
 
 
       /*
-       * ==========================================
-       * 記錄目前頁面狀態
-       * ==========================================
+       * 記錄開始時間
        */
 
-      let leftPage = false;
-
-
-      /*
-       * 如果 App 成功接管，
-       * Samsung Internet 通常會進入 hidden。
-       */
-
-      function handleVisibility() {
-
-        if (
-          document.visibilityState ===
-          "hidden"
-        ) {
-
-          leftPage = true;
-
-        }
-
-      }
-
-
-      document.addEventListener(
-        "visibilitychange",
-        handleVisibility
-      );
+      const startTime =
+        Date.now();
 
 
       /*
        * ==========================================
-       * 立即開啟原本的 Deep Link
+       * 直接嘗試開啟 App
        *
-       * 注意：
-       * 這仍然發生在使用者 click 事件中。
-       *
-       * 這是這次最重要的修改。
+       * 這裡保持原本版本
        * ==========================================
        */
 
@@ -615,44 +521,25 @@
 
       /*
        * ==========================================
-       * 3 秒後才檢查 fallback
-       *
-       * 原本是 1.5 秒。
-       * 現在給 Samsung Internet 更多時間。
+       * Fallback
        * ==========================================
        */
 
       setTimeout(function () {
 
 
-        document.removeEventListener(
-          "visibilitychange",
-          handleVisibility
-        );
+        if (
+          Date.now() - startTime >= 1300
+        ) {
 
-
-        /*
-         * App 已成功接管
-         */
-
-        if (leftPage) {
-
-          return;
+          showFallback(
+            webURL
+          );
 
         }
 
 
-        /*
-         * 頁面仍然存在：
-         * 顯示網頁 fallback。
-         */
-
-        showFallback(
-          webURL
-        );
-
-
-      }, 3000);
+      }, 1500);
 
     }
 
