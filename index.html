@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -5,49 +6,185 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
-  <title>Instagram Reels</title>
+  <meta name="theme-color" content="#000000">
+
+  <title>影像流</title>
 
   <style>
-    html, body {
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
       background: #000;
       color: #fff;
-      font-family: Arial, sans-serif;
+      overflow: hidden;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Noto Sans TC",
+        "Microsoft JhengHei",
+        Arial,
+        sans-serif;
     }
 
     body {
+      min-height: 100dvh;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100dvh;
+
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+
+      padding:
+        env(safe-area-inset-top)
+        24px
+        env(safe-area-inset-bottom)
+        24px;
+
+      text-align: center;
+    }
+
+    .message {
+      font-size: clamp(18px, 5vw, 28px);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      line-height: 1.6;
+
+      margin-bottom: 36px;
     }
 
     .loading {
-      text-align: center;
+      width: 18px;
+      height: 18px;
+
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .fallback {
+      display: none;
+
+      margin-top: 10px;
+    }
+
+    .fallback.show {
+      display: block;
+    }
+
+    .fallback a {
+      display: inline-block;
+
+      padding: 14px 24px;
+
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      border-radius: 999px;
+
+      color: #fff;
+      text-decoration: none;
+
       font-size: 16px;
-      opacity: 0.8;
+      letter-spacing: 0.08em;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .fallback a:active {
+      background: #fff;
+      color: #000;
+    }
+
+    .hint {
+      display: none;
+
+      margin-top: 18px;
+
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: 0.55;
+      letter-spacing: 0.04em;
+    }
+
+    .hint.show {
+      display: block;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="loading">
-    正在開啟 Instagram…
-  </div>
+  <main class="screen">
+
+    <div class="message" id="message">
+      正在進入你的影像流
+    </div>
+
+    <div class="loading" id="loading"></div>
+
+    <div class="fallback" id="fallback">
+
+      <a
+        href="https://www.instagram.com/reels/"
+        id="instagramLink"
+      >
+        點擊這裡進入 Instagram
+      </a>
+
+    </div>
+
+    <div class="hint" id="hint">
+      如果 Instagram 沒有自動開啟，請點擊上方按鈕。
+    </div>
+
+  </main>
+
 
   <script>
 
-    // Instagram Reels
-    const instagramURL = "https://www.instagram.com/reels/";
+    /*
+     * ==========================================
+     * Instagram 目標
+     * ==========================================
+     */
 
-    // 判斷裝置
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const instagramURL =
+      "https://www.instagram.com/reels/";
+
+
+    /*
+     * ==========================================
+     * 判斷裝置
+     * ==========================================
+     */
+
+    const userAgent =
+      navigator.userAgent ||
+      navigator.vendor ||
+      window.opera;
 
     const isIOS =
       /iPhone|iPad|iPod/i.test(userAgent);
@@ -55,41 +192,85 @@
     const isAndroid =
       /Android/i.test(userAgent);
 
+
     /*
-     * 最穩定的方法：
+     * ==========================================
+     * 開啟 Instagram
+     * ==========================================
      *
-     * 不使用 instagram://
-     * 而是直接開 Instagram HTTPS 網址。
+     * 使用 Instagram HTTPS 網址。
      *
-     * 如果手機已安裝 Instagram，
-     * iOS / Android 可能會自動交給 App。
+     * 如果手機系統已安裝 Instagram，
+     * iOS / Android 可能會交給 App 開啟。
      *
      * 如果沒有 App，
-     * 則留在瀏覽器開 Instagram 網頁版。
+     * 則會使用瀏覽器開啟 Instagram。
      */
 
     function openInstagram() {
 
-      if (isIOS) {
+      window.location.href = instagramURL;
 
-        // iPhone / iPad
-        window.location.href = instagramURL;
-
-      } else if (isAndroid) {
-
-        // Android
-        window.location.href = instagramURL;
-
-      } else {
-
-        // 電腦或其他裝置
-        window.location.href = instagramURL;
-
-      }
     }
 
-    // 稍微延遲，避免部分瀏覽器阻擋跳轉
-    setTimeout(openInstagram, 300);
+
+    /*
+     * ==========================================
+     * 顯示備用按鈕
+     * ==========================================
+     *
+     * 如果 1.5 秒後仍然留在這個頁面，
+     * 顯示手動進入 Instagram 的按鈕。
+     */
+
+    function showFallback() {
+
+      document
+        .getElementById("loading")
+        .style.display = "none";
+
+      document
+        .getElementById("fallback")
+        .classList.add("show");
+
+      document
+        .getElementById("hint")
+        .classList.add("show");
+
+    }
+
+
+    /*
+     * ==========================================
+     * 嘗試開啟
+     * ==========================================
+     */
+
+    setTimeout(function () {
+
+      openInstagram();
+
+    }, 300);
+
+
+    /*
+     * ==========================================
+     * 1.5 秒後顯示備用按鈕
+     * ==========================================
+     */
+
+    setTimeout(function () {
+
+      showFallback();
+
+    }, 1800);
+
+  </script>
+
+</body>
+</html>
+```
+
 
   </script>
 
