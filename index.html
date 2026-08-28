@@ -1,7 +1,9 @@
 ```html
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -11,9 +13,10 @@
 
   <meta name="theme-color" content="#000000">
 
-  <title>影像流</title>
+  <title>選擇你的窗口</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -22,11 +25,15 @@
     body {
       margin: 0;
       padding: 0;
+
       width: 100%;
       height: 100%;
+
       background: #000;
       color: #fff;
+
       overflow: hidden;
+
       font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -46,6 +53,7 @@
 
       display: flex;
       flex-direction: column;
+
       align-items: center;
       justify-content: center;
 
@@ -58,215 +66,441 @@
       text-align: center;
     }
 
-    .message {
-      font-size: clamp(18px, 5vw, 28px);
-      font-weight: 400;
-      letter-spacing: 0.08em;
-      line-height: 1.6;
+    .title {
+      font-size: clamp(24px, 7vw, 36px);
 
-      margin-bottom: 36px;
+      font-weight: 400;
+
+      letter-spacing: 0.12em;
+
+      margin-bottom: 55px;
+    }
+
+    .options {
+      width: 100%;
+      max-width: 360px;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 16px;
+    }
+
+    .option {
+
+      width: 100%;
+      min-height: 58px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 16px 20px;
+
+      background: transparent;
+      color: #fff;
+
+      border:
+        1px solid rgba(255,255,255,0.55);
+
+      border-radius: 999px;
+
+      font-size: 17px;
+
+      letter-spacing: 0.08em;
+
+      cursor: pointer;
+
+      -webkit-tap-highlight-color: transparent;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.1s ease;
+    }
+
+    .option:active {
+
+      background: #fff;
+      color: #000;
+
+      transform: scale(0.97);
     }
 
     .loading {
+
+      display: none;
+
+      margin-top: 35px;
+
+      font-size: 15px;
+
+      letter-spacing: 0.08em;
+
+      opacity: 0.7;
+    }
+
+    .spinner {
+
       width: 18px;
       height: 18px;
 
-      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      margin: 18px auto 0;
+
+      border:
+        1.5px solid rgba(255,255,255,0.25);
+
       border-top-color: #fff;
+
       border-radius: 50%;
 
       animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
+
       to {
         transform: rotate(360deg);
       }
+
     }
 
     .fallback {
+
       display: none;
 
-      margin-top: 10px;
+      margin-top: 35px;
     }
 
     .fallback.show {
+
       display: block;
     }
 
     .fallback a {
+
       display: inline-block;
 
-      padding: 14px 24px;
-
-      border: 1px solid rgba(255, 255, 255, 0.65);
-      border-radius: 999px;
+      padding: 13px 22px;
 
       color: #fff;
+
+      border:
+        1px solid rgba(255,255,255,0.6);
+
+      border-radius: 999px;
+
       text-decoration: none;
 
-      font-size: 16px;
-      letter-spacing: 0.08em;
+      font-size: 14px;
 
-      transition:
-        background 0.2s ease,
-        color 0.2s ease;
+      letter-spacing: 0.06em;
     }
 
-    .fallback a:active {
-      background: #fff;
-      color: #000;
-    }
+    .note {
 
-    .hint {
       display: none;
 
-      margin-top: 18px;
+      margin-top: 14px;
 
-      font-size: 13px;
+      max-width: 300px;
+
+      font-size: 12px;
+
       line-height: 1.6;
-      opacity: 0.55;
-      letter-spacing: 0.04em;
+
+      opacity: 0.5;
     }
 
-    .hint.show {
+    .note.show {
+
       display: block;
     }
+
   </style>
+
 </head>
+
 
 <body>
 
+
   <main class="screen">
 
-    <div class="message" id="message">
-      正在進入你的影像流
+
+    <div
+      class="title"
+      id="title"
+    >
+      選擇你的窗口
     </div>
 
-    <div class="loading" id="loading"></div>
 
-    <div class="fallback" id="fallback">
+    <div
+      class="options"
+      id="options"
+    >
+
+
+      <!-- IG Reels -->
+
+      <button
+        class="option"
+        onclick="openInstagramReels()"
+      >
+        IG Reels
+      </button>
+
+
+      <!-- Facebook -->
+
+      <button
+        class="option"
+        onclick="openFacebook()"
+      >
+        Facebook
+      </button>
+
+
+      <!-- Threads -->
+
+      <button
+        class="option"
+        onclick="openThreads()"
+      >
+        Threads
+      </button>
+
+
+    </div>
+
+
+    <div
+      class="loading"
+      id="loading"
+    >
+
+      正在開啟……
+
+      <div class="spinner"></div>
+
+    </div>
+
+
+    <div
+      class="fallback"
+      id="fallback"
+    >
 
       <a
-        href="https://www.instagram.com/reels/"
-        id="instagramLink"
+        id="fallbackLink"
+        href="#"
       >
-        點擊這裡進入 Instagram
+        在瀏覽器開啟
       </a>
 
     </div>
 
-    <div class="hint" id="hint">
-      如果 Instagram 沒有自動開啟，請點擊上方按鈕。
+
+    <div
+      class="note"
+      id="note"
+    >
+      如果 App 沒有自動開啟，請點擊上方按鈕。
     </div>
+
 
   </main>
 
 
   <script>
 
+
     /*
-     * ==========================================
-     * Instagram 目標
-     * ==========================================
+     * =========================================
+     * 網頁版備援網址
+     * =========================================
      */
 
-    const instagramURL =
+    const reelsWeb =
       "https://www.instagram.com/reels/";
 
 
-    /*
-     * ==========================================
-     * 判斷裝置
-     * ==========================================
-     */
+    const facebookWeb =
+      "https://www.facebook.com/";
 
-    const userAgent =
-      navigator.userAgent ||
-      navigator.vendor ||
-      window.opera;
 
-    const isIOS =
-      /iPhone|iPad|iPod/i.test(userAgent);
-
-    const isAndroid =
-      /Android/i.test(userAgent);
+    const threadsWeb =
+      "https://www.threads.net/";
 
 
     /*
-     * ==========================================
-     * 開啟 Instagram
-     * ==========================================
-     *
-     * 使用 Instagram HTTPS 網址。
-     *
-     * 如果手機系統已安裝 Instagram，
-     * iOS / Android 可能會交給 App 開啟。
-     *
-     * 如果沒有 App，
-     * 則會使用瀏覽器開啟 Instagram。
+     * =========================================
+     * 顯示正在開啟
+     * =========================================
      */
 
-    function openInstagram() {
+    function showLoading() {
 
-      window.location.href = instagramURL;
+      document
+        .getElementById("title")
+        .style.display = "none";
+
+
+      document
+        .getElementById("options")
+        .style.display = "none";
+
+
+      document
+        .getElementById("loading")
+        .style.display = "block";
 
     }
 
 
     /*
-     * ==========================================
-     * 顯示備用按鈕
-     * ==========================================
-     *
-     * 如果 1.5 秒後仍然留在這個頁面，
-     * 顯示手動進入 Instagram 的按鈕。
+     * =========================================
+     * 顯示瀏覽器備援
+     * =========================================
      */
 
-    function showFallback() {
+    function showFallback(url) {
 
       document
         .getElementById("loading")
         .style.display = "none";
 
-      document
-        .getElementById("fallback")
-        .classList.add("show");
 
-      document
-        .getElementById("hint")
-        .classList.add("show");
+      const fallback =
+        document.getElementById("fallback");
+
+
+      const link =
+        document.getElementById("fallbackLink");
+
+
+      const note =
+        document.getElementById("note");
+
+
+      link.href = url;
+
+
+      fallback.classList.add("show");
+
+
+      note.classList.add("show");
 
     }
 
 
     /*
-     * ==========================================
-     * 嘗試開啟
-     * ==========================================
+     * =========================================
+     * 嘗試開啟 App
+     * =========================================
      */
 
-    setTimeout(function () {
+    function tryOpenApp(appURL, webURL) {
 
-      openInstagram();
+      showLoading();
 
-    }, 300);
+
+      const startTime =
+        Date.now();
+
+
+      /*
+       * 嘗試使用 App Deep Link
+       */
+
+      window.location.href =
+        appURL;
+
+
+      /*
+       * 約 1.5 秒後檢查
+       */
+
+      setTimeout(function () {
+
+        if (
+          Date.now() - startTime >= 1300
+        ) {
+
+          showFallback(webURL);
+
+        }
+
+      }, 1500);
+
+    }
 
 
     /*
-     * ==========================================
-     * 1.5 秒後顯示備用按鈕
-     * ==========================================
+     * =========================================
+     * IG Reels
+     * =========================================
      */
 
-    setTimeout(function () {
+    function openInstagramReels() {
 
-      showFallback();
+      const appURL =
+        "instagram://reels/";
 
-    }, 1800);
+
+      tryOpenApp(
+        appURL,
+        reelsWeb
+      );
+
+    }
+
+
+    /*
+     * =========================================
+     * Facebook
+     * =========================================
+     */
+
+    function openFacebook() {
+
+      const appURL =
+        "fb://facewebmodal/f?href=https://www.facebook.com/";
+
+
+      tryOpenApp(
+        appURL,
+        facebookWeb
+      );
+
+    }
+
+
+    /*
+     * =========================================
+     * Threads
+     * =========================================
+     */
+
+    function openThreads() {
+
+      const appURL =
+        "barcelona://";
+
+
+      tryOpenApp(
+        appURL,
+        threadsWeb
+      );
+
+    }
+
 
   </script>
 
+
 </body>
+
 </html>
 ```
