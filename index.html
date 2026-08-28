@@ -11,9 +11,13 @@
     content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
-  <meta name="theme-color" content="#000000">
+  <meta
+    name="theme-color"
+    content="#000000"
+  >
 
   <title>選擇你的窗口</title>
+
 
   <style>
 
@@ -21,8 +25,10 @@
       box-sizing: border-box;
     }
 
+
     html,
     body {
+
       margin: 0;
       padding: 0;
 
@@ -41,20 +47,28 @@
         "Microsoft JhengHei",
         Arial,
         sans-serif;
+
     }
+
 
     body {
+
       min-height: 100dvh;
+
     }
 
+
     .screen {
+
       width: 100%;
       height: 100dvh;
 
       display: flex;
+
       flex-direction: column;
 
       align-items: center;
+
       justify-content: center;
 
       padding:
@@ -64,40 +78,54 @@
         24px;
 
       text-align: center;
+
     }
 
+
     .title {
-      font-size: clamp(24px, 7vw, 36px);
+
+      font-size:
+        clamp(24px, 7vw, 36px);
 
       font-weight: 400;
 
       letter-spacing: 0.12em;
 
       margin-bottom: 55px;
+
     }
 
+
     .options {
+
       width: 100%;
       max-width: 360px;
 
       display: flex;
+
       flex-direction: column;
 
       gap: 16px;
+
     }
+
 
     .option {
 
       width: 100%;
+
       min-height: 58px;
 
       display: flex;
+
       align-items: center;
+
       justify-content: center;
 
       padding: 16px 20px;
 
       background: transparent;
+
       color: #fff;
 
       border:
@@ -109,6 +137,8 @@
 
       letter-spacing: 0.08em;
 
+      text-decoration: none;
+
       cursor: pointer;
 
       -webkit-tap-highlight-color: transparent;
@@ -117,15 +147,26 @@
         background 0.2s ease,
         color 0.2s ease,
         transform 0.1s ease;
+
     }
+
 
     .option:active {
 
       background: #fff;
+
       color: #000;
 
       transform: scale(0.97);
+
     }
+
+
+    /*
+     * =========================================
+     * 開啟中的畫面
+     * =========================================
+     */
 
     .loading {
 
@@ -138,7 +179,9 @@
       letter-spacing: 0.08em;
 
       opacity: 0.7;
+
     }
+
 
     .spinner {
 
@@ -154,8 +197,11 @@
 
       border-radius: 50%;
 
-      animation: spin 0.8s linear infinite;
+      animation:
+        spin 0.8s linear infinite;
+
     }
+
 
     @keyframes spin {
 
@@ -165,17 +211,28 @@
 
     }
 
+
+    /*
+     * =========================================
+     * 備用按鈕
+     * =========================================
+     */
+
     .fallback {
 
       display: none;
 
       margin-top: 35px;
+
     }
+
 
     .fallback.show {
 
       display: block;
+
     }
+
 
     .fallback a {
 
@@ -195,7 +252,9 @@
       font-size: 14px;
 
       letter-spacing: 0.06em;
+
     }
+
 
     .note {
 
@@ -210,11 +269,14 @@
       line-height: 1.6;
 
       opacity: 0.5;
+
     }
+
 
     .note.show {
 
       display: block;
+
     }
 
   </style>
@@ -228,6 +290,10 @@
   <main class="screen">
 
 
+    <!-- =====================================
+         主標題
+         ===================================== -->
+
     <div
       class="title"
       id="title"
@@ -235,6 +301,10 @@
       選擇你的窗口
     </div>
 
+
+    <!-- =====================================
+         三個入口
+         ===================================== -->
 
     <div
       class="options"
@@ -244,36 +314,43 @@
 
       <!-- IG Reels -->
 
-      <button
+      <a
         class="option"
-        onclick="openInstagramReels()"
+        href="https://www.instagram.com/reels/"
+        onclick="openDestination(event, this.href)"
       >
         IG Reels
-      </button>
+      </a>
 
 
-      <!-- Facebook -->
+      <!-- Facebook Reels -->
 
-      <button
+      <a
         class="option"
-        onclick="openFacebook()"
+        href="https://www.facebook.com/reels/"
+        onclick="openDestination(event, this.href)"
       >
-        Facebook
-      </button>
+        Facebook Reels
+      </a>
 
 
       <!-- Threads -->
 
-      <button
+      <a
         class="option"
-        onclick="openThreads()"
+        href="https://www.threads.net/"
+        onclick="openDestination(event, this.href)"
       >
         Threads
-      </button>
+      </a>
 
 
     </div>
 
+
+    <!-- =====================================
+         開啟畫面
+         ===================================== -->
 
     <div
       class="loading"
@@ -286,6 +363,10 @@
 
     </div>
 
+
+    <!-- =====================================
+         備用瀏覽器按鈕
+         ===================================== -->
 
     <div
       class="fallback"
@@ -306,7 +387,10 @@
       class="note"
       id="note"
     >
-      如果 App 沒有自動開啟，請點擊上方按鈕。
+
+      如果 App 沒有自動開啟，
+      請點擊上方按鈕。
+
     </div>
 
 
@@ -318,29 +402,39 @@
 
     /*
      * =========================================
-     * 網頁版備援網址
+     * 開啟目的地
      * =========================================
+     *
+     * 使用 HTTPS URL。
+     *
+     * 不再使用：
+     *
+     * instagram://
+     * fb://
+     * barcelona://
+     *
+     * 讓 iOS / Android 自己判斷
+     * Universal Links / App Links。
+     *
      */
 
-    const reelsWeb =
-      "https://www.instagram.com/reels/";
+
+    function openDestination(event, url) {
+
+      /*
+       * 保留瀏覽器原本的 HTTPS 導向行為。
+       *
+       * 手機如果設定了 App Link，
+       * 系統可能直接交給對應 App。
+       *
+       * 如果沒有 App，
+       * 則開啟網頁版。
+       */
 
 
-    const facebookWeb =
-      "https://www.facebook.com/";
-
-
-    const threadsWeb =
-      "https://www.threads.net/";
-
-
-    /*
-     * =========================================
-     * 顯示正在開啟
-     * =========================================
-     */
-
-    function showLoading() {
+      /*
+       * 顯示「正在開啟」
+       */
 
       document
         .getElementById("title")
@@ -356,145 +450,41 @@
         .getElementById("loading")
         .style.display = "block";
 
-    }
-
-
-    /*
-     * =========================================
-     * 顯示瀏覽器備援
-     * =========================================
-     */
-
-    function showFallback(url) {
-
-      document
-        .getElementById("loading")
-        .style.display = "none";
-
-
-      const fallback =
-        document.getElementById("fallback");
-
-
-      const link =
-        document.getElementById("fallbackLink");
-
-
-      const note =
-        document.getElementById("note");
-
-
-      link.href = url;
-
-
-      fallback.classList.add("show");
-
-
-      note.classList.add("show");
-
-    }
-
-
-    /*
-     * =========================================
-     * 嘗試開啟 App
-     * =========================================
-     */
-
-    function tryOpenApp(appURL, webURL) {
-
-      showLoading();
-
-
-      const startTime =
-        Date.now();
-
 
       /*
-       * 嘗試使用 App Deep Link
+       * 讓系統處理 HTTPS App Link。
+       *
+       * 不阻止原本的連結行為。
        */
 
-      window.location.href =
-        appURL;
-
-
-      /*
-       * 約 1.5 秒後檢查
-       */
-
-      setTimeout(function () {
-
-        if (
-          Date.now() - startTime >= 1300
-        ) {
-
-          showFallback(webURL);
-
-        }
-
-      }, 1500);
+      return true;
 
     }
 
 
     /*
      * =========================================
-     * IG Reels
+     * 當使用者返回這個頁面時
      * =========================================
+     *
+     * 如果 App 已經成功接管，
+     * 這段不會影響 App。
+     *
+     * 如果沒有成功，
+     * 頁面仍然可以繼續使用。
      */
 
-    function openInstagramReels() {
+    window.addEventListener(
+      "pageshow",
+      function () {
 
-      const appURL =
-        "instagram://reels/";
+        /*
+         * 不自動重新跳轉，
+         * 避免造成循環。
+         */
 
-
-      tryOpenApp(
-        appURL,
-        reelsWeb
-      );
-
-    }
-
-
-    /*
-     * =========================================
-     * Facebook
-     * =========================================
-     */
-
-    function openFacebook() {
-
-      const appURL =
-        "fb://facewebmodal/f?href=https://www.facebook.com/";
-
-
-      tryOpenApp(
-        appURL,
-        facebookWeb
-      );
-
-    }
-
-
-    /*
-     * =========================================
-     * Threads
-     * =========================================
-     */
-
-    function openThreads() {
-
-      const appURL =
-        "barcelona://";
-
-
-      tryOpenApp(
-        appURL,
-        threadsWeb
-      );
-
-    }
+      }
+    );
 
 
   </script>
