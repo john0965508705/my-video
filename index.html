@@ -82,6 +82,12 @@
     }
 
 
+    /*
+     * ===============================
+     * 標題
+     * ===============================
+     */
+
     .title {
 
       font-size:
@@ -96,9 +102,16 @@
     }
 
 
+    /*
+     * ===============================
+     * 三個選項
+     * ===============================
+     */
+
     .options {
 
       width: 100%;
+
       max-width: 360px;
 
       display: flex;
@@ -137,6 +150,8 @@
 
       letter-spacing: 0.08em;
 
+      text-decoration: none;
+
       cursor: pointer;
 
       -webkit-tap-highlight-color: transparent;
@@ -160,6 +175,12 @@
     }
 
 
+    /*
+     * ===============================
+     * Loading
+     * ===============================
+     */
+
     .loading {
 
       display: none;
@@ -178,6 +199,7 @@
     .spinner {
 
       width: 18px;
+
       height: 18px;
 
       margin: 18px auto 0;
@@ -203,6 +225,12 @@
 
     }
 
+
+    /*
+     * ===============================
+     * Fallback
+     * ===============================
+     */
 
     .fallback {
 
@@ -276,6 +304,10 @@
   <main class="screen">
 
 
+    <!-- ===============================
+         標題
+         =============================== -->
+
     <div
       class="title"
       id="title"
@@ -284,38 +316,55 @@
     </div>
 
 
+    <!-- ===============================
+         選項
+         =============================== -->
+
     <div
       class="options"
       id="options"
     >
 
 
-      <button
+      <!-- IG Reels -->
+
+      <a
         class="option"
-        onclick="openInstagramReels()"
+        href="https://www.instagram.com/"
+        onclick="openApp(event, 'instagram')"
       >
         IG Reels
-      </button>
+      </a>
 
 
-      <button
+      <!-- Facebook Reels -->
+
+      <a
         class="option"
-        onclick="openFacebookReels()"
+        href="https://www.facebook.com/"
+        onclick="openApp(event, 'facebook')"
       >
         Facebook Reels
-      </button>
+      </a>
 
 
-      <button
+      <!-- Threads -->
+
+      <a
         class="option"
-        onclick="openThreads()"
+        href="https://www.threads.net/"
+        onclick="openApp(event, 'threads')"
       >
         Threads
-      </button>
+      </a>
 
 
     </div>
 
+
+    <!-- ===============================
+         開啟中
+         =============================== -->
 
     <div
       class="loading"
@@ -328,6 +377,10 @@
 
     </div>
 
+
+    <!-- ===============================
+         最後 fallback
+         =============================== -->
 
     <div
       class="fallback"
@@ -363,25 +416,56 @@
 
     /*
      * ==================================================
-     * 網頁版網址
+     * 網頁 fallback
      * ==================================================
      */
 
-    const instagramWeb =
-      "https://www.instagram.com/reels/";
+    const websites = {
 
+      instagram:
+        "https://www.instagram.com/",
 
-    const facebookWeb =
-      "https://www.facebook.com/reels/";
+      facebook:
+        "https://www.facebook.com/",
 
+      threads:
+        "https://www.threads.net/"
 
-    const threadsWeb =
-      "https://www.threads.net/";
+    };
 
 
     /*
      * ==================================================
-     * 顯示「正在開啟」
+     * App Deep Link
+     * ==================================================
+     *
+     * 注意：
+     *
+     * 這裡只用來「開啟 App」，
+     * 不再要求 App 直接進 Reels。
+     *
+     * 這樣可以避免之前 iPhone
+     * Instagram 出現錯誤。
+     */
+
+
+    const apps = {
+
+      instagram:
+        "instagram://",
+
+      facebook:
+        "fb://",
+
+      threads:
+        "barcelona://"
+
+    };
+
+
+    /*
+     * ==================================================
+     * 顯示 Loading
      * ==================================================
      */
 
@@ -406,7 +490,7 @@
 
     /*
      * ==================================================
-     * 顯示最後的瀏覽器 fallback
+     * 顯示瀏覽器 fallback
      * ==================================================
      */
 
@@ -442,226 +526,69 @@
 
     /*
      * ==================================================
-     * 三層開啟機制
+     * 開啟 App
      * ==================================================
-     *
-     * 第一層：
-     * App Deep Link
-     *
-     * 第二層：
-     * HTTPS App / Universal Link
-     *
-     * 第三層：
-     * 一般瀏覽器網址
-     *
      */
 
+    function openApp(event, appName) {
 
-    function launchWithFallback(
-      appURL,
-      httpsURL,
-      webURL
-    ) {
+      /*
+       * 阻止原本的 HTTPS 連結
+       * 先讓 App Deep Link 嘗試。
+       */
+
+      event.preventDefault();
+
 
       showLoading();
 
 
+      const appURL =
+        apps[appName];
+
+
+      const webURL =
+        websites[appName];
+
+
       /*
-       * ----------------------------------------------
-       * 第一層
-       * App Deep Link
-       * ----------------------------------------------
+       * 記錄開始時間
        */
 
-      let appAttempt =
-        false;
-
-
-      try {
-
-        appAttempt = true;
-
-        window.location.href =
-          appURL;
-
-      } catch (error) {
-
-        appAttempt = false;
-
-      }
+      const startTime =
+        Date.now();
 
 
       /*
-       * ----------------------------------------------
-       * 第二層
-       *
-       * 如果 App 沒有成功接管，
-       * 改用 HTTPS App Link。
-       * ----------------------------------------------
+       * 嘗試開啟 App
+       */
+
+      window.location.href =
+        appURL;
+
+
+      /*
+       * 約 1.5 秒後，
+       * 如果頁面還存在，
+       * 顯示瀏覽器 fallback。
        */
 
       setTimeout(function () {
 
         /*
-         * 如果使用者仍然停留在本頁，
-         * 嘗試 HTTPS URL。
+         * 頁面仍然可見，
+         * 通常表示 App 沒有成功接管。
          */
 
-        window.location.href =
-          httpsURL;
+        if (
+          Date.now() - startTime >= 1300
+        ) {
 
-      }, 900);
+          showFallback(webURL);
 
+        }
 
-      /*
-       * ----------------------------------------------
-       * 第三層
-       *
-       * 如果 HTTPS 仍然沒有成功，
-       * 顯示瀏覽器版本。
-       * ----------------------------------------------
-       */
-
-      setTimeout(function () {
-
-        showFallback(webURL);
-
-      }, 2300);
-
-    }
-
-
-    /*
-     * ==================================================
-     * IG REELS
-     * ==================================================
-     */
-
-    function openInstagramReels() {
-
-
-      /*
-       * 第一層：
-       * Instagram App Deep Link
-       */
-
-      const appURL =
-        "instagram://reels/";
-
-
-      /*
-       * 第二層：
-       * Instagram HTTPS Reels
-       */
-
-      const httpsURL =
-        "https://www.instagram.com/reels/";
-
-
-      /*
-       * 第三層：
-       * Instagram Web Reels
-       */
-
-      const webURL =
-        "https://www.instagram.com/reels/";
-
-
-      launchWithFallback(
-        appURL,
-        httpsURL,
-        webURL
-      );
-
-    }
-
-
-    /*
-     * ==================================================
-     * FACEBOOK REELS
-     * ==================================================
-     */
-
-    function openFacebookReels() {
-
-
-      /*
-       * 第一層：
-       * Facebook App
-       */
-
-      const appURL =
-        "fb://reels/";
-
-
-      /*
-       * 第二層：
-       * Facebook HTTPS Reels
-       */
-
-      const httpsURL =
-        "https://www.facebook.com/reels/";
-
-
-      /*
-       * 第三層：
-       * Facebook Web Reels
-       */
-
-      const webURL =
-        "https://www.facebook.com/reels/";
-
-
-      launchWithFallback(
-        appURL,
-        httpsURL,
-        webURL
-      );
-
-    }
-
-
-    /*
-     * ==================================================
-     * THREADS
-     * ==================================================
-     */
-
-    function openThreads() {
-
-
-      /*
-       * 第一層：
-       * Threads App
-       */
-
-      const appURL =
-        "barcelona://";
-
-
-      /*
-       * 第二層：
-       * Threads HTTPS
-       */
-
-      const httpsURL =
-        "https://www.threads.net/";
-
-
-      /*
-       * 第三層：
-       * Threads Web
-       */
-
-      const webURL =
-        "https://www.threads.net/";
-
-
-      launchWithFallback(
-        appURL,
-        httpsURL,
-        webURL
-      );
+      }, 1500);
 
     }
 
