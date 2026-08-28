@@ -1,1030 +1,666 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
+
   <meta charset="UTF-8">
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
-  <meta name="theme-color" content="#000000">
+  <meta
+    name="theme-color"
+    content="#000000"
+  >
 
-  <title>...</title>
+  <title>選擇你的窗口</title>
+
 
   <style>
+
     * {
       box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
     }
+
 
     html,
     body {
+
       margin: 0;
       padding: 0;
+
+      width: 100%;
+      height: 100%;
+
       background: #000;
       color: #fff;
+
+      overflow: hidden;
+
       font-family:
         -apple-system,
         BlinkMacSystemFont,
-        "Segoe UI",
+        "Noto Sans TC",
+        "Microsoft JhengHei",
+        Arial,
         sans-serif;
-      overflow-x: hidden;
+
     }
+
 
     body {
-      min-height: 100vh;
-      min-height: 100svh;
+      min-height: 100dvh;
     }
 
-    /* =========================
-       每一個內容區塊
-    ========================= */
 
-    .page {
-      position: relative;
+    .screen {
+
       width: 100%;
-      height: 100vh;
-      height: 100svh;
-      min-height: 500px;
+      height: 100dvh;
 
       display: flex;
-      align-items: center;
-      justify-content: center;
 
-      overflow: hidden;
-
-      background: #000;
-    }
-
-    .content {
-      position: relative;
-      width: 100%;
-      height: 100%;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      overflow: hidden;
-    }
-
-    /* =========================
-       開始畫面
-    ========================= */
-
-    #startScreen {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-
-      background: #000;
-
-      display: flex;
       flex-direction: column;
+
       align-items: center;
+
       justify-content: center;
+
+      padding:
+        env(safe-area-inset-top)
+        24px
+        env(safe-area-inset-bottom)
+        24px;
+
+      text-align: center;
+
+    }
+
+
+    .title {
+
+      font-size:
+        clamp(24px, 7vw, 36px);
+
+      font-weight: 400;
+
+      letter-spacing: 0.12em;
+
+      margin-bottom: 55px;
+
+    }
+
+
+    .options {
+
+      width: 100%;
+
+      max-width: 360px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 16px;
+
+    }
+
+
+    .option {
+
+      width: 100%;
+
+      min-height: 58px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 16px 20px;
+
+      background: transparent;
+
+      color: #fff;
+
+      border:
+        1px solid rgba(255,255,255,0.55);
+
+      border-radius: 999px;
+
+      font-size: 17px;
+
+      letter-spacing: 0.08em;
+
+      text-decoration: none;
 
       cursor: pointer;
 
-      transition: opacity 0.6s ease;
+      -webkit-tap-highlight-color: transparent;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.1s ease;
+
     }
 
-    #startScreen.hide {
-      opacity: 0;
-      pointer-events: none;
+
+    .option:active {
+
+      background: #fff;
+
+      color: #000;
+
+      transform: scale(0.97);
+
     }
 
-    .startText {
-      font-size: clamp(24px, 7vw, 42px);
-      font-weight: 700;
+
+    /*
+     * ===============================
+     * Loading
+     * ===============================
+     */
+
+    .loading {
+
+      display: none;
+
+      margin-top: 35px;
+
+      font-size: 15px;
+
       letter-spacing: 0.08em;
-      margin-bottom: 40px;
+
+      opacity: 0.7;
+
     }
 
-    .startButton {
-      border: 1px solid rgba(255,255,255,0.5);
-      border-radius: 999px;
-
-      padding: 15px 35px;
-
-      font-size: 16px;
-      letter-spacing: 0.12em;
-
-      background: transparent;
-      color: #fff;
-    }
-
-    /* =========================
-       底部提示
-    ========================= */
-
-    .scrollHint {
-      position: absolute;
-      bottom: max(25px, env(safe-area-inset-bottom));
-      left: 50%;
-
-      transform: translateX(-50%);
-
-      font-size: 13px;
-      letter-spacing: 0.15em;
-
-      opacity: 0.45;
-
-      animation: hintMove 1.5s infinite ease-in-out;
-
-      pointer-events: none;
-    }
-
-    @keyframes hintMove {
-      0%, 100% {
-        transform: translate(-50%, 0);
-        opacity: 0.25;
-      }
-
-      50% {
-        transform: translate(-50%, 8px);
-        opacity: 0.8;
-      }
-    }
-
-    /* =========================
-       1. 呼吸圓
-    ========================= */
-
-    .breathingCircle {
-      width: min(55vw, 280px);
-      aspect-ratio: 1;
-
-      border-radius: 50%;
-
-      background: #fff;
-
-      animation: breathe 2.5s infinite ease-in-out;
-    }
-
-    @keyframes breathe {
-      0%, 100% {
-        transform: scale(0.35);
-      }
-
-      50% {
-        transform: scale(1);
-      }
-    }
-
-    /* =========================
-       2. 彩色漸變
-    ========================= */
-
-    .gradientBlob {
-      width: 55vw;
-      height: 55vw;
-      max-width: 320px;
-      max-height: 320px;
-
-      border-radius: 42% 58% 63% 37% / 44% 41% 59% 56%;
-
-      background:
-        linear-gradient(
-          135deg,
-          #ff004c,
-          #ff9d00,
-          #ffee00,
-          #00ff88,
-          #00aaff,
-          #7b00ff,
-          #ff00d4
-        );
-
-      background-size: 400% 400%;
-
-      animation:
-        blobMove 4s ease-in-out infinite,
-        gradientMove 5s linear infinite;
-    }
-
-    @keyframes blobMove {
-      0%, 100% {
-        border-radius: 42% 58% 63% 37% / 44% 41% 59% 56%;
-        transform: rotate(0deg) scale(0.8);
-      }
-
-      50% {
-        border-radius: 65% 35% 38% 62% / 57% 62% 38% 43%;
-        transform: rotate(180deg) scale(1.05);
-      }
-    }
-
-    @keyframes gradientMove {
-      0% {
-        background-position: 0% 50%;
-      }
-
-      50% {
-        background-position: 100% 50%;
-      }
-
-      100% {
-        background-position: 0% 50%;
-      }
-    }
-
-    /* =========================
-       3. 完美排列
-    ========================= */
-
-    .grid {
-      display: grid;
-
-      grid-template-columns: repeat(6, 22px);
-      gap: 9px;
-    }
-
-    .grid span {
-      width: 22px;
-      height: 22px;
-
-      background: #fff;
-
-      animation: gridPulse 1.2s infinite ease-in-out;
-    }
-
-    .grid span:nth-child(2n) {
-      animation-delay: 0.1s;
-    }
-
-    .grid span:nth-child(3n) {
-      animation-delay: 0.2s;
-    }
-
-    .grid span:nth-child(4n) {
-      animation-delay: 0.3s;
-    }
-
-    @keyframes gridPulse {
-      0%, 100% {
-        transform: scale(0.3);
-        border-radius: 50%;
-      }
-
-      50% {
-        transform: scale(1);
-        border-radius: 3px;
-      }
-    }
-
-    /* =========================
-       4. 99.99%
-    ========================= */
-
-    .loadingBox {
-      width: 75%;
-      max-width: 450px;
-    }
-
-    .loadingNumber {
-      text-align: center;
-
-      font-size: clamp(45px, 15vw, 90px);
-      font-weight: 800;
-
-      margin-bottom: 30px;
-    }
-
-    .loadingBar {
-      width: 100%;
-      height: 8px;
-
-      background: #222;
-
-      overflow: hidden;
-    }
-
-    .loadingFill {
-      width: 99.99%;
-      height: 100%;
-
-      background: #fff;
-
-      animation: loading 3s infinite ease-in-out;
-    }
-
-    @keyframes loading {
-      0% {
-        width: 70%;
-      }
-
-      70% {
-        width: 99.99%;
-      }
-
-      100% {
-        width: 98%;
-      }
-    }
-
-    /* =========================
-       5. 彈跳球
-    ========================= */
-
-    .ballArea {
-      position: relative;
-
-      width: 80%;
-      max-width: 400px;
-      height: 300px;
-
-      border-bottom: 1px solid #333;
-    }
-
-    .ball {
-      position: absolute;
-
-      bottom: 0;
-      left: 50%;
-
-      width: 55px;
-      height: 55px;
-
-      border-radius: 50%;
-
-      background: #fff;
-
-      transform: translateX(-50%);
-
-      animation: bounce 1.1s infinite ease-in;
-    }
-
-    @keyframes bounce {
-      0%, 100% {
-        bottom: 0;
-        transform: translateX(-50%) scaleX(1.1) scaleY(0.9);
-      }
-
-      50% {
-        bottom: 245px;
-        transform: translateX(-50%) scaleX(0.95) scaleY(1.05);
-      }
-    }
-
-    /* =========================
-       6. 旋轉
-    ========================= */
 
     .spinner {
-      width: 180px;
-      height: 180px;
 
-      border: 5px solid #222;
+      width: 18px;
+
+      height: 18px;
+
+      margin: 18px auto 0;
+
+      border:
+        1.5px solid rgba(255,255,255,0.25);
+
       border-top-color: #fff;
-      border-right-color: #fff;
 
       border-radius: 50%;
 
-      animation: spin 0.8s linear infinite;
+      animation:
+        spin 0.8s linear infinite;
+
     }
 
+
     @keyframes spin {
+
       to {
         transform: rotate(360deg);
       }
+
     }
 
-    /* =========================
-       7. 大字
-    ========================= */
 
-    .bigWord {
-      font-size: clamp(60px, 20vw, 150px);
+    /*
+     * ===============================
+     * Fallback
+     * ===============================
+     */
 
-      font-weight: 900;
+    .fallback {
 
-      letter-spacing: -0.08em;
+      display: none;
 
-      animation: textPop 1.2s infinite ease-in-out;
+      margin-top: 35px;
+
     }
 
-    @keyframes textPop {
-      0%, 100% {
-        transform: scale(0.75);
-        opacity: 0.2;
-      }
 
-      50% {
-        transform: scale(1);
-        opacity: 1;
-      }
+    .fallback.show {
+      display: block;
     }
 
-    /* =========================
-       8. 彩色粒子
-    ========================= */
 
-    .particles {
-      position: relative;
+    .fallback a {
 
-      width: 300px;
-      height: 300px;
+      display: inline-block;
+
+      padding: 13px 22px;
+
+      color: #fff;
+
+      border:
+        1px solid rgba(255,255,255,0.6);
+
+      border-radius: 999px;
+
+      text-decoration: none;
+
+      font-size: 14px;
+
+      letter-spacing: 0.06em;
+
     }
 
-    .particle {
-      position: absolute;
 
-      left: 50%;
-      top: 50%;
+    .note {
 
-      width: 14px;
-      height: 14px;
+      display: none;
 
-      border-radius: 50%;
+      margin-top: 14px;
 
-      animation: particleMove 2s infinite ease-out;
-    }
+      max-width: 300px;
 
-    .particle:nth-child(1) {
-      background: #ff0055;
-      --x: -120px;
-      --y: -100px;
-    }
+      font-size: 12px;
 
-    .particle:nth-child(2) {
-      background: #00aaff;
-      --x: 120px;
-      --y: -80px;
-    }
+      line-height: 1.6;
 
-    .particle:nth-child(3) {
-      background: #00ff88;
-      --x: -100px;
-      --y: 120px;
-    }
-
-    .particle:nth-child(4) {
-      background: #ffee00;
-      --x: 110px;
-      --y: 110px;
-    }
-
-    .particle:nth-child(5) {
-      background: #aa00ff;
-      --x: 0px;
-      --y: -140px;
-    }
-
-    .particle:nth-child(6) {
-      background: #ff7700;
-      --x: 0px;
-      --y: 140px;
-    }
-
-    @keyframes particleMove {
-      0% {
-        transform:
-          translate(-50%, -50%)
-          translate(0, 0)
-          scale(0);
-      }
-
-      50% {
-        transform:
-          translate(-50%, -50%)
-          translate(var(--x), var(--y))
-          scale(1);
-      }
-
-      100% {
-        transform:
-          translate(-50%, -50%)
-          translate(0, 0)
-          scale(0);
-      }
-    }
-
-    /* =========================
-       9. 計數
-    ========================= */
-
-    .counter {
-      text-align: center;
-    }
-
-    .counterSmall {
-      font-size: 15px;
       opacity: 0.5;
 
-      margin-bottom: 15px;
     }
 
-    .counterNumber {
-      font-size: clamp(80px, 25vw, 180px);
 
-      font-weight: 900;
-
-      line-height: 1;
-
-      animation: counterPulse 1s infinite;
-    }
-
-    @keyframes counterPulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.08);
-      }
-    }
-
-    /* =========================
-       10. 最後提示
-    ========================= */
-
-    .message {
-      padding: 30px;
-
-      text-align: center;
-
-      font-size: clamp(24px, 7vw, 42px);
-
-      line-height: 1.5;
-
-      font-weight: 700;
-    }
-
-    .message small {
+    .note.show {
       display: block;
-
-      margin-top: 30px;
-
-      font-size: 13px;
-
-      opacity: 0.35;
-
-      font-weight: 400;
     }
 
-    /* =========================
-       減少動畫
-    ========================= */
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-      }
-    }
   </style>
+
 </head>
+
 
 <body>
 
-  <!-- =========================
-       開始畫面
-  ========================= -->
 
-  <div id="startScreen">
-    <div class="startText">你想要一點快樂嗎？</div>
+  <main class="screen">
 
-    <div class="startButton">
-      點一下
+
+    <div
+      class="title"
+      id="title"
+    >
+      選擇你的窗口
     </div>
-  </div>
 
 
-  <!-- =========================
-       內容
-  ========================= -->
+    <div
+      class="options"
+      id="options"
+    >
 
-  <main id="feed"></main>
+
+      <!-- Instagram -->
+
+      <a
+        class="option"
+        href="https://www.instagram.com/"
+        onclick="openApp(event, 'instagram')"
+      >
+        Instagram
+      </a>
+
+
+      <!-- Facebook -->
+
+      <a
+        class="option"
+        href="https://www.facebook.com/"
+        onclick="openApp(event, 'facebook')"
+      >
+        Facebook
+      </a>
+
+
+      <!-- Threads -->
+
+      <a
+        class="option"
+        href="https://www.threads.net/"
+        onclick="openApp(event, 'threads')"
+      >
+        Threads
+      </a>
+
+
+    </div>
+
+
+    <div
+      class="loading"
+      id="loading"
+    >
+
+      正在開啟……
+
+      <div class="spinner"></div>
+
+    </div>
+
+
+    <div
+      class="fallback"
+      id="fallback"
+    >
+
+      <a
+        id="fallbackLink"
+        href="#"
+      >
+        在瀏覽器開啟
+      </a>
+
+    </div>
+
+
+    <div
+      class="note"
+      id="note"
+    >
+
+      如果 App 沒有自動開啟，
+      請點擊上方按鈕。
+
+    </div>
+
+
+  </main>
 
 
   <script>
-    /* =====================================================
-       廉價多巴胺
-    ===================================================== */
-
-    const feed = document.getElementById("feed");
-    const startScreen = document.getElementById("startScreen");
-
-    let pageNumber = 0;
-
-    const contents = [
-      createBreathingCircle,
-      createGradientBlob,
-      createGrid,
-      createLoading,
-      createBall,
-      createSpinner,
-      createBigWord,
-      createParticles,
-      createCounter
-    ];
 
 
-    /* =====================================================
-       開始
-    ===================================================== */
+    /*
+     * ==========================================
+     * 網頁 fallback
+     * ==========================================
+     */
 
-    startScreen.addEventListener("click", async () => {
+    const websites = {
 
-      startScreen.classList.add("hide");
+      instagram:
+        "https://www.instagram.com/",
+
+      facebook:
+        "https://www.facebook.com/",
+
+      threads:
+        "https://www.threads.net/"
+
+    };
+
+
+    /*
+     * ==========================================
+     * 原本已經測試過的 Deep Link
+     *
+     * ★ 不修改 ★
+     * ==========================================
+     */
+
+    const apps = {
+
+      instagram:
+        "instagram://",
+
+      facebook:
+        "fb://",
+
+      threads:
+        "barcelona://"
+
+    };
+
+
+    /*
+     * ==========================================
+     * 防止連續點擊
+     * ==========================================
+     */
+
+    let opening = false;
+
+
+    /*
+     * ==========================================
+     * 顯示 Loading
+     * ==========================================
+     */
+
+    function showLoading() {
+
+      document
+        .getElementById("title")
+        .style.display = "none";
+
+
+      document
+        .getElementById("options")
+        .style.display = "none";
+
+
+      document
+        .getElementById("loading")
+        .style.display = "block";
+
+    }
+
+
+    /*
+     * ==========================================
+     * 顯示 fallback
+     * ==========================================
+     */
+
+    function showFallback(url) {
 
       /*
-        嘗試啟動真正的瀏覽器 fullscreen。
+       * 如果 App 已經成功接管頁面，
+       * 不再顯示 fallback。
+       */
 
-        注意：
-        iPhone Safari 對 fullscreen 支援有限，
-        所以失敗時不影響網站正常使用。
-      */
+      if (
+        document.visibilityState !==
+        "visible"
+      ) {
 
-      try {
-        if (document.documentElement.requestFullscreen) {
-          await document.documentElement.requestFullscreen();
-        }
-      } catch (error) {
-        console.log("Fullscreen unavailable.");
+        return;
+
       }
 
-      /*
-        如果手機支援 Screen Orientation，
-        不強制鎖定方向，讓手機自己決定。
-      */
 
-      window.scrollTo({
-        top: 0,
-        behavior: "instant"
-      });
-    });
+      document
+        .getElementById("loading")
+        .style.display = "none";
 
 
-    /* =====================================================
-       建立頁面
-    ===================================================== */
-
-    function createPage(contentHTML) {
-
-      const page = document.createElement("section");
-
-      page.className = "page";
-
-      page.innerHTML = `
-        <div class="content">
-          ${contentHTML}
-        </div>
-
-        <div class="scrollHint">
-          ↓
-        </div>
-      `;
-
-      feed.appendChild(page);
-    }
-
-
-    /* =====================================================
-       1
-    ===================================================== */
-
-    function createBreathingCircle() {
-
-      return `
-        <div class="breathingCircle"></div>
-      `;
-    }
-
-
-    /* =====================================================
-       2
-    ===================================================== */
-
-    function createGradientBlob() {
-
-      return `
-        <div class="gradientBlob"></div>
-      `;
-    }
-
-
-    /* =====================================================
-       3
-    ===================================================== */
-
-    function createGrid() {
-
-      let html = `<div class="grid">`;
-
-      for (let i = 0; i < 36; i++) {
-        html += `<span></span>`;
-      }
-
-      html += `</div>`;
-
-      return html;
-    }
-
-
-    /* =====================================================
-       4
-    ===================================================== */
-
-    function createLoading() {
-
-      return `
-        <div class="loadingBox">
-
-          <div class="loadingNumber">
-            99.99%
-          </div>
-
-          <div class="loadingBar">
-            <div class="loadingFill"></div>
-          </div>
-
-        </div>
-      `;
-    }
-
-
-    /* =====================================================
-       5
-    ===================================================== */
-
-    function createBall() {
-
-      return `
-        <div class="ballArea">
-          <div class="ball"></div>
-        </div>
-      `;
-    }
-
-
-    /* =====================================================
-       6
-    ===================================================== */
-
-    function createSpinner() {
-
-      return `
-        <div class="spinner"></div>
-      `;
-    }
-
-
-    /* =====================================================
-       7
-    ===================================================== */
-
-    function createBigWord() {
-
-      const words = [
-        "WOW",
-        "GOOD",
-        "MORE",
-        "YES",
-        "AGAIN"
-      ];
-
-      const word =
-        words[Math.floor(Math.random() * words.length)];
-
-      return `
-        <div class="bigWord">
-          ${word}
-        </div>
-      `;
-    }
-
-
-    /* =====================================================
-       8
-    ===================================================== */
-
-    function createParticles() {
-
-      let html = `
-        <div class="particles">
-      `;
-
-      for (let i = 0; i < 6; i++) {
-        html += `<div class="particle"></div>`;
-      }
-
-      html += `</div>`;
-
-      return html;
-    }
-
-
-    /* =====================================================
-       9
-    ===================================================== */
-
-    function createCounter() {
-
-      const number =
-        Math.floor(Math.random() * 9000) + 1000;
-
-      return `
-        <div class="counter">
-
-          <div class="counterSmall">
-            YOU WON
-          </div>
-
-          <div class="counterNumber">
-            +${number}
-          </div>
-
-        </div>
-      `;
-    }
-
-
-    /* =====================================================
-       10
-       第 10 頁以後開始出現文字
-    ===================================================== */
-
-    function createMessage() {
-
-      const messages = [
-        "再往下。",
-        "還有一個。",
-        "下一個會更好。",
-        "不要停。",
-        "再一次。",
-        "你可以繼續。",
-        "還沒結束。",
-        "最後一個。",
-        "真的最後一個。",
-        "……",
-        "你為什麼還在滑？"
-      ];
-
-      const index =
-        Math.min(
-          Math.floor(pageNumber / 5),
-          messages.length - 1
+      const fallback =
+        document.getElementById(
+          "fallback"
         );
 
-      return `
-        <div class="message">
 
-          ${messages[index]}
-
-          <small>
-            ↓
-          </small>
-
-        </div>
-      `;
-    }
-
-
-    /* =====================================================
-       產生內容
-    ===================================================== */
-
-    function addNextPage() {
-
-      pageNumber++;
-
-      /*
-        前 20 頁：
-        主要提供視覺刺激
-      */
-
-      if (pageNumber <= 20) {
-
-        const creator =
-          contents[
-            (pageNumber - 1) % contents.length
-          ];
-
-        createPage(creator());
-
-      } else {
-
-        /*
-          20 頁以後：
-          開始加入文字刺激
-        */
-
-        const creator =
-          contents[
-            Math.floor(Math.random() * contents.length)
-          ];
-
-        createPage(
-          creator() +
-          createMessage()
+      const link =
+        document.getElementById(
+          "fallbackLink"
         );
-      }
+
+
+      const note =
+        document.getElementById(
+          "note"
+        );
+
+
+      link.href = url;
+
+
+      fallback.classList.add(
+        "show"
+      );
+
+
+      note.classList.add(
+        "show"
+      );
+
     }
 
 
-    /* =====================================================
-       初始內容
-    ===================================================== */
+    /*
+     * ==========================================
+     * App 開啟
+     * ==========================================
+     */
 
-    for (let i = 0; i < 5; i++) {
-      addNextPage();
-    }
+    function openApp(event, appName) {
 
-
-    /* =====================================================
-       無限下滑
-    ===================================================== */
-
-    let loading = false;
-
-    window.addEventListener("scroll", () => {
-
-      if (loading) return;
-
-      const scrollPosition =
-        window.scrollY + window.innerHeight;
-
-      const pageHeight =
-        document.documentElement.scrollHeight;
 
       /*
-        距離底部 1500px 就提前生成
-      */
+       * 防止重複點擊
+       */
 
-      if (scrollPosition >
-          pageHeight - 1500) {
+      if (opening) {
 
-        loading = true;
-
-        /*
-          一次產生 3 個，
-          避免滑到最下面突然沒有內容。
-        */
-
-        for (let i = 0; i < 3; i++) {
-          addNextPage();
-        }
-
-        setTimeout(() => {
-          loading = false;
-        }, 100);
-      }
-
-    });
-
-
-    /* =====================================================
-       防止手機雙擊縮放
-    ===================================================== */
-
-    document.addEventListener(
-      "dblclick",
-      event => {
         event.preventDefault();
-      },
-      { passive: false }
-    );
+
+        return;
+
+      }
 
 
-    /* =====================================================
-       首次觸控時再嘗試 fullscreen
-    ===================================================== */
+      opening = true;
 
-    document.addEventListener(
-      "touchstart",
-      async () => {
 
-        try {
+      /*
+       * 阻止 HTTPS
+       */
 
-          if (
-            !document.fullscreenElement &&
-            document.documentElement.requestFullscreen
-          ) {
+      event.preventDefault();
 
-            await document.documentElement.requestFullscreen();
 
-          }
+      /*
+       * 顯示 Loading
+       */
 
-        } catch (error) {
+      showLoading();
 
-          console.log(
-            "Fullscreen unavailable."
-          );
+
+      const appURL =
+        apps[appName];
+
+
+      const webURL =
+        websites[appName];
+
+
+      /*
+       * ==========================================
+       * 記錄目前頁面狀態
+       * ==========================================
+       */
+
+      let leftPage = false;
+
+
+      /*
+       * 如果 App 成功接管，
+       * Samsung Internet 通常會進入 hidden。
+       */
+
+      function handleVisibility() {
+
+        if (
+          document.visibilityState ===
+          "hidden"
+        ) {
+
+          leftPage = true;
 
         }
 
-      },
-      {
-        once: true
       }
-    );
+
+
+      document.addEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
+
+
+      /*
+       * ==========================================
+       * 立即開啟原本的 Deep Link
+       *
+       * 注意：
+       * 這仍然發生在使用者 click 事件中。
+       *
+       * 這是這次最重要的修改。
+       * ==========================================
+       */
+
+      window.location.href =
+        appURL;
+
+
+      /*
+       * ==========================================
+       * 3 秒後才檢查 fallback
+       *
+       * 原本是 1.5 秒。
+       * 現在給 Samsung Internet 更多時間。
+       * ==========================================
+       */
+
+      setTimeout(function () {
+
+
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibility
+        );
+
+
+        /*
+         * App 已成功接管
+         */
+
+        if (leftPage) {
+
+          return;
+
+        }
+
+
+        /*
+         * 頁面仍然存在：
+         * 顯示網頁 fallback。
+         */
+
+        showFallback(
+          webURL
+        );
+
+
+      }, 3000);
+
+    }
+
 
   </script>
 
+
 </body>
+
 </html>
+```
