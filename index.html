@@ -1,68 +1,97 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width,
-                   initial-scale=1.0,
-                   maximum-scale=1.0,
-                   user-scalable=no">
+  <meta charset="UTF-8">
 
-    <title></title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            overflow: hidden;
-        }
+  <title>Instagram Reels</title>
 
-        video {
-            width: 100vw;
-            height: 100vh;
-            object-fit: contain;
-            display: block;
-            background: black;
-        }
-    </style>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading {
+      text-align: center;
+      font-size: 16px;
+      opacity: 0.8;
+    }
+  </style>
 </head>
 
 <body>
 
-<video
-    id="video"
-    autoplay
-    muted
-    loop
-    playsinline
-    preload="auto">
+  <div class="loading">
+    正在開啟 Instagram…
+  </div>
 
-    <source src="video.mp4" type="video/mp4">
+  <script>
 
-</video>
+    // Instagram Reels
+    const instagramURL = "https://www.instagram.com/reels/";
 
-<script>
-const video = document.getElementById("video");
+    // 判斷裝置
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-video.play().catch(() => {});
+    const isIOS =
+      /iPhone|iPad|iPod/i.test(userAgent);
 
-video.addEventListener("click", async () => {
-    try {
-        if (video.requestFullscreen) {
-            await video.requestFullscreen();
-        } else if (video.webkitEnterFullscreen) {
-            video.webkitEnterFullscreen();
-        }
+    const isAndroid =
+      /Android/i.test(userAgent);
 
-        video.play();
-    } catch (e) {
-        console.log(e);
+    /*
+     * 最穩定的方法：
+     *
+     * 不使用 instagram://
+     * 而是直接開 Instagram HTTPS 網址。
+     *
+     * 如果手機已安裝 Instagram，
+     * iOS / Android 可能會自動交給 App。
+     *
+     * 如果沒有 App，
+     * 則留在瀏覽器開 Instagram 網頁版。
+     */
+
+    function openInstagram() {
+
+      if (isIOS) {
+
+        // iPhone / iPad
+        window.location.href = instagramURL;
+
+      } else if (isAndroid) {
+
+        // Android
+        window.location.href = instagramURL;
+
+      } else {
+
+        // 電腦或其他裝置
+        window.location.href = instagramURL;
+
+      }
     }
-});
-</script>
+
+    // 稍微延遲，避免部分瀏覽器阻擋跳轉
+    setTimeout(openInstagram, 300);
+
+  </script>
 
 </body>
 </html>
