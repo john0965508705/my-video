@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-TW">
 
@@ -51,9 +52,7 @@
 
 
     body {
-
       min-height: 100dvh;
-
     }
 
 
@@ -81,12 +80,6 @@
     }
 
 
-    /*
-     * ===============================
-     * 標題
-     * ===============================
-     */
-
     .title {
 
       font-size:
@@ -100,12 +93,6 @@
 
     }
 
-
-    /*
-     * ===============================
-     * 三個選項
-     * ===============================
-     */
 
     .options {
 
@@ -241,9 +228,7 @@
 
 
     .fallback.show {
-
       display: block;
-
     }
 
 
@@ -287,9 +272,7 @@
 
 
     .note.show {
-
       display: block;
-
     }
 
   </style>
@@ -303,10 +286,6 @@
   <main class="screen">
 
 
-    <!-- ===============================
-         標題
-         =============================== -->
-
     <div
       class="title"
       id="title"
@@ -315,35 +294,31 @@
     </div>
 
 
-    <!-- ===============================
-         選項
-         =============================== -->
-
     <div
       class="options"
       id="options"
     >
 
 
-      <!-- IG Reels -->
+      <!-- Instagram -->
 
       <a
         class="option"
         href="https://www.instagram.com/"
         onclick="openApp(event, 'instagram')"
       >
-        IG Reels
+        Instagram
       </a>
 
 
-      <!-- Facebook Reels -->
+      <!-- Facebook -->
 
       <a
         class="option"
         href="https://www.facebook.com/"
         onclick="openApp(event, 'facebook')"
       >
-        Facebook Reels
+        Facebook
       </a>
 
 
@@ -361,10 +336,6 @@
     </div>
 
 
-    <!-- ===============================
-         開啟中
-         =============================== -->
-
     <div
       class="loading"
       id="loading"
@@ -376,10 +347,6 @@
 
     </div>
 
-
-    <!-- ===============================
-         最後 fallback
-         =============================== -->
 
     <div
       class="fallback"
@@ -414,9 +381,9 @@
 
 
     /*
-     * ==================================================
+     * ==========================================
      * 網頁 fallback
-     * ==================================================
+     * ==========================================
      */
 
     const websites = {
@@ -434,19 +401,12 @@
 
 
     /*
-     * ==================================================
-     * App Deep Link
-     * ==================================================
+     * ==========================================
+     * 原本已經測試過的 Deep Link
      *
-     * 注意：
-     *
-     * 這裡只用來「開啟 App」，
-     * 不再要求 App 直接進 Reels。
-     *
-     * 這樣可以避免之前 iPhone
-     * Instagram 出現錯誤。
+     * ★ 不修改 ★
+     * ==========================================
      */
-
 
     const apps = {
 
@@ -463,9 +423,18 @@
 
 
     /*
-     * ==================================================
+     * ==========================================
+     * 防止連續點擊
+     * ==========================================
+     */
+
+    let opening = false;
+
+
+    /*
+     * ==========================================
      * 顯示 Loading
-     * ==================================================
+     * ==========================================
      */
 
     function showLoading() {
@@ -488,12 +457,27 @@
 
 
     /*
-     * ==================================================
-     * 顯示瀏覽器 fallback
-     * ==================================================
+     * ==========================================
+     * 顯示 fallback
+     * ==========================================
      */
 
     function showFallback(url) {
+
+      /*
+       * 如果 App 已經成功接管頁面，
+       * 不再顯示 fallback。
+       */
+
+      if (
+        document.visibilityState !==
+        "visible"
+      ) {
+
+        return;
+
+      }
+
 
       document
         .getElementById("loading")
@@ -501,43 +485,73 @@
 
 
       const fallback =
-        document.getElementById("fallback");
+        document.getElementById(
+          "fallback"
+        );
 
 
       const link =
-        document.getElementById("fallbackLink");
+        document.getElementById(
+          "fallbackLink"
+        );
 
 
       const note =
-        document.getElementById("note");
+        document.getElementById(
+          "note"
+        );
 
 
       link.href = url;
 
 
-      fallback.classList.add("show");
+      fallback.classList.add(
+        "show"
+      );
 
 
-      note.classList.add("show");
+      note.classList.add(
+        "show"
+      );
 
     }
 
 
     /*
-     * ==================================================
-     * 開啟 App
-     * ==================================================
+     * ==========================================
+     * App 開啟
+     * ==========================================
      */
 
     function openApp(event, appName) {
 
+
       /*
-       * 阻止原本的 HTTPS 連結
-       * 先讓 App Deep Link 嘗試。
+       * 防止重複點擊
+       */
+
+      if (opening) {
+
+        event.preventDefault();
+
+        return;
+
+      }
+
+
+      opening = true;
+
+
+      /*
+       * 阻止 HTTPS
        */
 
       event.preventDefault();
 
+
+      /*
+       * 顯示 Loading
+       */
 
       showLoading();
 
@@ -551,15 +565,48 @@
 
 
       /*
-       * 記錄開始時間
+       * ==========================================
+       * 記錄目前頁面狀態
+       * ==========================================
        */
 
-      const startTime =
-        Date.now();
+      let leftPage = false;
 
 
       /*
-       * 嘗試開啟 App
+       * 如果 App 成功接管，
+       * Samsung Internet 通常會進入 hidden。
+       */
+
+      function handleVisibility() {
+
+        if (
+          document.visibilityState ===
+          "hidden"
+        ) {
+
+          leftPage = true;
+
+        }
+
+      }
+
+
+      document.addEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
+
+
+      /*
+       * ==========================================
+       * 立即開啟原本的 Deep Link
+       *
+       * 注意：
+       * 這仍然發生在使用者 click 事件中。
+       *
+       * 這是這次最重要的修改。
+       * ==========================================
        */
 
       window.location.href =
@@ -567,27 +614,45 @@
 
 
       /*
-       * 約 1.5 秒後，
-       * 如果頁面還存在，
-       * 顯示瀏覽器 fallback。
+       * ==========================================
+       * 3 秒後才檢查 fallback
+       *
+       * 原本是 1.5 秒。
+       * 現在給 Samsung Internet 更多時間。
+       * ==========================================
        */
 
       setTimeout(function () {
 
+
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibility
+        );
+
+
         /*
-         * 頁面仍然可見，
-         * 通常表示 App 沒有成功接管。
+         * App 已成功接管
          */
 
-        if (
-          Date.now() - startTime >= 1300
-        ) {
+        if (leftPage) {
 
-          showFallback(webURL);
+          return;
 
         }
 
-      }, 1500);
+
+        /*
+         * 頁面仍然存在：
+         * 顯示網頁 fallback。
+         */
+
+        showFallback(
+          webURL
+        );
+
+
+      }, 3000);
 
     }
 
@@ -598,3 +663,4 @@
 </body>
 
 </html>
+```
