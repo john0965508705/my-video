@@ -137,8 +137,6 @@
 
       letter-spacing: 0.08em;
 
-      text-decoration: none;
-
       cursor: pointer;
 
       -webkit-tap-highlight-color: transparent;
@@ -161,12 +159,6 @@
 
     }
 
-
-    /*
-     * =========================================
-     * 開啟中的畫面
-     * =========================================
-     */
 
     .loading {
 
@@ -211,12 +203,6 @@
 
     }
 
-
-    /*
-     * =========================================
-     * 備用按鈕
-     * =========================================
-     */
 
     .fallback {
 
@@ -290,10 +276,6 @@
   <main class="screen">
 
 
-    <!-- =====================================
-         主標題
-         ===================================== -->
-
     <div
       class="title"
       id="title"
@@ -302,55 +284,38 @@
     </div>
 
 
-    <!-- =====================================
-         三個入口
-         ===================================== -->
-
     <div
       class="options"
       id="options"
     >
 
 
-      <!-- IG Reels -->
-
-      <a
+      <button
         class="option"
-        href="https://www.instagram.com/reels/"
-        onclick="openDestination(event, this.href)"
+        onclick="openInstagramReels()"
       >
         IG Reels
-      </a>
+      </button>
 
 
-      <!-- Facebook Reels -->
-
-      <a
+      <button
         class="option"
-        href="https://www.facebook.com/reels/"
-        onclick="openDestination(event, this.href)"
+        onclick="openFacebookReels()"
       >
         Facebook Reels
-      </a>
+      </button>
 
 
-      <!-- Threads -->
-
-      <a
+      <button
         class="option"
-        href="https://www.threads.net/"
-        onclick="openDestination(event, this.href)"
+        onclick="openThreads()"
       >
         Threads
-      </a>
+      </button>
 
 
     </div>
 
-
-    <!-- =====================================
-         開啟畫面
-         ===================================== -->
 
     <div
       class="loading"
@@ -363,10 +328,6 @@
 
     </div>
 
-
-    <!-- =====================================
-         備用瀏覽器按鈕
-         ===================================== -->
 
     <div
       class="fallback"
@@ -401,40 +362,30 @@
 
 
     /*
-     * =========================================
-     * 開啟目的地
-     * =========================================
-     *
-     * 使用 HTTPS URL。
-     *
-     * 不再使用：
-     *
-     * instagram://
-     * fb://
-     * barcelona://
-     *
-     * 讓 iOS / Android 自己判斷
-     * Universal Links / App Links。
-     *
+     * ==================================================
+     * 網頁版網址
+     * ==================================================
      */
 
-
-    function openDestination(event, url) {
-
-      /*
-       * 保留瀏覽器原本的 HTTPS 導向行為。
-       *
-       * 手機如果設定了 App Link，
-       * 系統可能直接交給對應 App。
-       *
-       * 如果沒有 App，
-       * 則開啟網頁版。
-       */
+    const instagramWeb =
+      "https://www.instagram.com/reels/";
 
 
-      /*
-       * 顯示「正在開啟」
-       */
+    const facebookWeb =
+      "https://www.facebook.com/reels/";
+
+
+    const threadsWeb =
+      "https://www.threads.net/";
+
+
+    /*
+     * ==================================================
+     * 顯示「正在開啟」
+     * ==================================================
+     */
+
+    function showLoading() {
 
       document
         .getElementById("title")
@@ -450,41 +401,269 @@
         .getElementById("loading")
         .style.display = "block";
 
+    }
 
-      /*
-       * 讓系統處理 HTTPS App Link。
-       *
-       * 不阻止原本的連結行為。
-       */
 
-      return true;
+    /*
+     * ==================================================
+     * 顯示最後的瀏覽器 fallback
+     * ==================================================
+     */
+
+    function showFallback(url) {
+
+      document
+        .getElementById("loading")
+        .style.display = "none";
+
+
+      const fallback =
+        document.getElementById("fallback");
+
+
+      const link =
+        document.getElementById("fallbackLink");
+
+
+      const note =
+        document.getElementById("note");
+
+
+      link.href = url;
+
+
+      fallback.classList.add("show");
+
+
+      note.classList.add("show");
 
     }
 
 
     /*
-     * =========================================
-     * 當使用者返回這個頁面時
-     * =========================================
+     * ==================================================
+     * 三層開啟機制
+     * ==================================================
      *
-     * 如果 App 已經成功接管，
-     * 這段不會影響 App。
+     * 第一層：
+     * App Deep Link
      *
-     * 如果沒有成功，
-     * 頁面仍然可以繼續使用。
+     * 第二層：
+     * HTTPS App / Universal Link
+     *
+     * 第三層：
+     * 一般瀏覽器網址
+     *
      */
 
-    window.addEventListener(
-      "pageshow",
-      function () {
 
-        /*
-         * 不自動重新跳轉，
-         * 避免造成循環。
-         */
+    function launchWithFallback(
+      appURL,
+      httpsURL,
+      webURL
+    ) {
+
+      showLoading();
+
+
+      /*
+       * ----------------------------------------------
+       * 第一層
+       * App Deep Link
+       * ----------------------------------------------
+       */
+
+      let appAttempt =
+        false;
+
+
+      try {
+
+        appAttempt = true;
+
+        window.location.href =
+          appURL;
+
+      } catch (error) {
+
+        appAttempt = false;
 
       }
-    );
+
+
+      /*
+       * ----------------------------------------------
+       * 第二層
+       *
+       * 如果 App 沒有成功接管，
+       * 改用 HTTPS App Link。
+       * ----------------------------------------------
+       */
+
+      setTimeout(function () {
+
+        /*
+         * 如果使用者仍然停留在本頁，
+         * 嘗試 HTTPS URL。
+         */
+
+        window.location.href =
+          httpsURL;
+
+      }, 900);
+
+
+      /*
+       * ----------------------------------------------
+       * 第三層
+       *
+       * 如果 HTTPS 仍然沒有成功，
+       * 顯示瀏覽器版本。
+       * ----------------------------------------------
+       */
+
+      setTimeout(function () {
+
+        showFallback(webURL);
+
+      }, 2300);
+
+    }
+
+
+    /*
+     * ==================================================
+     * IG REELS
+     * ==================================================
+     */
+
+    function openInstagramReels() {
+
+
+      /*
+       * 第一層：
+       * Instagram App Deep Link
+       */
+
+      const appURL =
+        "instagram://reels/";
+
+
+      /*
+       * 第二層：
+       * Instagram HTTPS Reels
+       */
+
+      const httpsURL =
+        "https://www.instagram.com/reels/";
+
+
+      /*
+       * 第三層：
+       * Instagram Web Reels
+       */
+
+      const webURL =
+        "https://www.instagram.com/reels/";
+
+
+      launchWithFallback(
+        appURL,
+        httpsURL,
+        webURL
+      );
+
+    }
+
+
+    /*
+     * ==================================================
+     * FACEBOOK REELS
+     * ==================================================
+     */
+
+    function openFacebookReels() {
+
+
+      /*
+       * 第一層：
+       * Facebook App
+       */
+
+      const appURL =
+        "fb://reels/";
+
+
+      /*
+       * 第二層：
+       * Facebook HTTPS Reels
+       */
+
+      const httpsURL =
+        "https://www.facebook.com/reels/";
+
+
+      /*
+       * 第三層：
+       * Facebook Web Reels
+       */
+
+      const webURL =
+        "https://www.facebook.com/reels/";
+
+
+      launchWithFallback(
+        appURL,
+        httpsURL,
+        webURL
+      );
+
+    }
+
+
+    /*
+     * ==================================================
+     * THREADS
+     * ==================================================
+     */
+
+    function openThreads() {
+
+
+      /*
+       * 第一層：
+       * Threads App
+       */
+
+      const appURL =
+        "barcelona://";
+
+
+      /*
+       * 第二層：
+       * Threads HTTPS
+       */
+
+      const httpsURL =
+        "https://www.threads.net/";
+
+
+      /*
+       * 第三層：
+       * Threads Web
+       */
+
+      const webURL =
+        "https://www.threads.net/";
+
+
+      launchWithFallback(
+        appURL,
+        httpsURL,
+        webURL
+      );
+
+    }
 
 
   </script>
