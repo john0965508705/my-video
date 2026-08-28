@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="zh-TW">
 
@@ -52,7 +51,9 @@
 
 
     body {
+
       min-height: 100dvh;
+
     }
 
 
@@ -169,50 +170,6 @@
       color: #000;
 
       transform: scale(0.97);
-
-    }
-
-
-    /*
-     * ===============================
-     * 黑屏倒數
-     * ===============================
-     */
-
-    #countdown {
-
-      display: none;
-
-      position: fixed;
-
-      inset: 0;
-
-      width: 100%;
-      height: 100dvh;
-
-      align-items: center;
-      justify-content: center;
-
-      background: #000;
-
-      z-index: 1000;
-
-    }
-
-
-    #number {
-
-      font-size:
-        clamp(120px, 35vw, 220px);
-
-      font-weight: 200;
-
-      line-height: 1;
-
-      letter-spacing: 0;
-
-      font-variant-numeric:
-        tabular-nums;
 
     }
 
@@ -347,7 +304,7 @@
 
 
     <!-- ===============================
-         選擇你的窗口
+         標題
          =============================== -->
 
     <div
@@ -359,7 +316,7 @@
 
 
     <!-- ===============================
-         三個選項
+         選項
          =============================== -->
 
     <div
@@ -368,28 +325,34 @@
     >
 
 
+      <!-- IG Reels -->
+
       <a
         class="option"
         href="https://www.instagram.com/"
-        onclick="startCountdown(event, 'instagram')"
+        onclick="openApp(event, 'instagram')"
       >
         IG Reels
       </a>
 
 
+      <!-- Facebook Reels -->
+
       <a
         class="option"
         href="https://www.facebook.com/"
-        onclick="startCountdown(event, 'facebook')"
+        onclick="openApp(event, 'facebook')"
       >
         Facebook Reels
       </a>
 
 
+      <!-- Threads -->
+
       <a
         class="option"
         href="https://www.threads.net/"
-        onclick="startCountdown(event, 'threads')"
+        onclick="openApp(event, 'threads')"
       >
         Threads
       </a>
@@ -399,7 +362,7 @@
 
 
     <!-- ===============================
-         原本的 Loading
+         開啟中
          =============================== -->
 
     <div
@@ -415,7 +378,7 @@
 
 
     <!-- ===============================
-         原本的 fallback
+         最後 fallback
          =============================== -->
 
     <div
@@ -447,23 +410,6 @@
   </main>
 
 
-  <!-- ===============================
-       黑屏倒數
-       =============================== -->
-
-  <div
-    id="countdown"
-  >
-
-    <div
-      id="number"
-    >
-      10
-    </div>
-
-  </div>
-
-
   <script>
 
 
@@ -489,11 +435,18 @@
 
     /*
      * ==================================================
-     * 原本成功的 App Deep Link
-     *
-     * ★ 不修改 ★
+     * App Deep Link
      * ==================================================
+     *
+     * 注意：
+     *
+     * 這裡只用來「開啟 App」，
+     * 不再要求 App 直接進 Reels。
+     *
+     * 這樣可以避免之前 iPhone
+     * Instagram 出現錯誤。
      */
+
 
     const apps = {
 
@@ -511,46 +464,11 @@
 
     /*
      * ==================================================
-     * 狀態
+     * 顯示 Loading
      * ==================================================
      */
 
-    let countdownRunning = false;
-
-
-    /*
-     * ==================================================
-     * 開始 10 秒倒數
-     * ==================================================
-     */
-
-    function startCountdown(event, appName) {
-
-
-      /*
-       * 阻止原本的 HTTPS 連結
-       */
-
-      event.preventDefault();
-
-
-      /*
-       * 防止重複點擊
-       */
-
-      if (countdownRunning) {
-
-        return;
-
-      }
-
-
-      countdownRunning = true;
-
-
-      /*
-       * 隱藏原本選單
-       */
+    function showLoading() {
 
       document
         .getElementById("title")
@@ -564,94 +482,43 @@
 
       document
         .getElementById("loading")
+        .style.display = "block";
+
+    }
+
+
+    /*
+     * ==================================================
+     * 顯示瀏覽器 fallback
+     * ==================================================
+     */
+
+    function showFallback(url) {
+
+      document
+        .getElementById("loading")
         .style.display = "none";
 
 
-      document
-        .getElementById("fallback")
-        .classList.remove("show");
+      const fallback =
+        document.getElementById("fallback");
 
 
-      document
-        .getElementById("note")
-        .classList.remove("show");
+      const link =
+        document.getElementById("fallbackLink");
 
 
-      /*
-       * 顯示黑屏
-       */
-
-      const countdown =
-        document.getElementById(
-          "countdown"
-        );
+      const note =
+        document.getElementById("note");
 
 
-      countdown.style.display =
-        "flex";
+      link.href = url;
 
 
-      /*
-       * 初始數字
-       */
-
-      let seconds = 10;
+      fallback.classList.add("show");
 
 
-      const number =
-        document.getElementById(
-          "number"
-        );
-
-
-      number.textContent =
-        seconds;
-
-
-      /*
-       * ==================================================
-       * 10 → 9 → 8 → ... → 1 → 0
-       * ==================================================
-       */
-
-      const timer =
-        setInterval(function () {
-
-
-          seconds--;
-
-
-          number.textContent =
-            seconds;
-
-
-          /*
-           * 到 0
-           */
-
-          if (seconds <= 0) {
-
-
-            clearInterval(timer);
-
-
-            /*
-             * 保留 0 約 150ms
-             */
-
-            setTimeout(function () {
-
-              openApp(
-                appName
-              );
-
-            }, 150);
-
-
-          }
-
-
-        }, 1000);
+      note.classList.add("show");
 
     }
 
@@ -659,26 +526,21 @@
     /*
      * ==================================================
      * 開啟 App
-     *
-     * ★ 完全沿用你提供的原始成功版本 ★
      * ==================================================
      */
 
-    function openApp(appName) {
-
-
-      /*
-       * 顯示原本 Loading
-       */
-
-      document
-        .getElementById("loading")
-        .style.display = "block";
-
+    function openApp(event, appName) {
 
       /*
-       * 取得 App URL
+       * 阻止原本的 HTTPS 連結
+       * 先讓 App Deep Link 嘗試。
        */
+
+      event.preventDefault();
+
+
+      showLoading();
+
 
       const appURL =
         apps[appName];
@@ -697,9 +559,7 @@
 
 
       /*
-       * ==============================================
-       * 原本的 App 啟動方式
-       * ==============================================
+       * 嘗試開啟 App
        */
 
       window.location.href =
@@ -707,73 +567,27 @@
 
 
       /*
-       * ==============================================
-       * 原本的 fallback 邏輯
-       * ==============================================
+       * 約 1.5 秒後，
+       * 如果頁面還存在，
+       * 顯示瀏覽器 fallback。
        */
 
       setTimeout(function () {
 
+        /*
+         * 頁面仍然可見，
+         * 通常表示 App 沒有成功接管。
+         */
 
         if (
           Date.now() - startTime >= 1300
         ) {
 
-          showFallback(
-            webURL
-          );
+          showFallback(webURL);
 
         }
 
-
       }, 1500);
-
-    }
-
-
-    /*
-     * ==================================================
-     * 顯示 fallback
-     * ==================================================
-     */
-
-    function showFallback(url) {
-
-
-      document
-        .getElementById("loading")
-        .style.display = "none";
-
-
-      const fallback =
-        document.getElementById(
-          "fallback"
-        );
-
-
-      const link =
-        document.getElementById(
-          "fallbackLink"
-        );
-
-
-      const note =
-        document.getElementById(
-          "note"
-        );
-
-
-      link.href = url;
-
-
-      fallback.classList.add(
-        "show"
-      );
-
-
-      note.classList.add(
-        "show"
-      );
 
     }
 
@@ -784,4 +598,3 @@
 </body>
 
 </html>
-```
